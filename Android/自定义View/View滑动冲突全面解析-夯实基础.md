@@ -404,7 +404,3 @@ public class CustomItemViewPager extends ViewPager {
 **更多Android开发知识请访问—— [Android开发日常笔记](https://github.com/Petterpx/Android_NoteBook)，欢迎Star,你的小小点赞，是对我莫大鼓励。**
 
 **参阅：Android开发艺术探索**
-
-相应的注释也在上面了，下面我们简单实现一下。主要问题就是 Banner滑动与 整个屏幕之间滑动切换Tablayout的关系.
-
-好了，代码动起来。
