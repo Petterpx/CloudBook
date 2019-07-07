@@ -4,7 +4,7 @@ Android的动画可以分为两种：传统动画与属性动画，如果严格�
 
 开始之前，我们先准备一些概念：
 
-![我爱编程，编程使我快乐](E:\Android_NoteBook\Android_NoteBook\assets\我爱编程，编程使我快乐-1562205213888.jpg)
+![我爱编程，编程使我快乐](../../assets\我爱编程，编程使我快乐.jpg)
 
 
 
@@ -14,7 +14,7 @@ View 动画 通过对场景里的对象不断做图像变换(平移-TranslateAni
 
 相关的继承关系：
 
-![1562204086265](E:\Android_NoteBook\Android_NoteBook\assets\1562204086265.png)
+![1562204086265](../../assets\1562204086265.png)
 
 
 
@@ -38,11 +38,15 @@ View 动画 通过对场景里的对象不断做图像变换(平移-TranslateAni
 
 
 
+
+
+
+
 好了，介绍了相应的基础概念
 
 下面我们来详细攻略吧！
 
-![嗨嗨，醒醒，敲代码了](E:\Android_NoteBook\Android_NoteBook\assets\嗨嗨，醒醒，敲代码了-1562205228351.jpg)
+![嗨嗨，醒醒，敲代码了](E:\Android_NoteBook\Android_NoteBook\assets\嗨嗨，醒醒，敲代码了.jpg)
 
 
 
@@ -104,9 +108,7 @@ View 动画 通过对场景里的对象不断做图像变换(平移-TranslateAni
 </set>
 ```
 
-![scale (E:\Android_NoteBook\Android_NoteBook\assets\scale (2).gif)](C:\Users\Pettepr\Desktop\scale (2).gif)
-
-
+![scale2](../../assets/scale2.gif)
 
 ### translate
 
