@@ -1,0 +1,102 @@
+# RxJava攻略之路_你还应该知道这些
+
+通过内置的Scheduler.
+
+## 基本概念
+
+如果我们不指定线程，默认是在调用 subscribe 方法的线程上进行回调。如果我们想切换线程，就需要使用 Schedular.RxJava已经内置了如下5个 Scheduler.
+
+- **Schedulers.immediate()**  
+
+  作用于当前线程运行，相当于你在哪个线程执行代码就在哪个线程运行
+
+- **Schedulers.newthread();**
+
+  运行在新线程中，相当于new Thread()，每次执行都会在新线程中
+
+- **Schedulers.io();**
+
+  io操作，里面有一个死循环的线程池来达到最大限度的处理逻辑，虽然效率高，但是如果只是一般的计算操作，不建议放在这里，避免重复创建无用线程。
+
+- **Schedulers.computation()**
+
+  一些需要cpu计算的操作，比如图形，视频等。这个Scheduler使用固定线程池，大小为 CPU 核数，不要把 I/O 操作放在 compuation() 中，否则 I/O 操作的等待事件会浪费 cpu。它是 buffer,debounce,delay,inteval,sample和 skip操作符的默认调度器。
+
+- **Schedulers.trampoline()**
+
+  当我们想在当前线程执行一个任务时，并不是立即时，可以用 tranpoline() 将它入队。这个调度器将会处理它的队列并且按序运行队列中的每一个任务。它是 repeat 和 retry 操作符默认的调度器。
+
+- **AndroidSchedulers.mainThread();**
+
+  指定运行在Android主线程中
+
+
+
+## 控制线程
+
+Rxjava 的控制线程方法为 subscribeOn 和 observeOn ，关于这两个方法的使用，我们在操作符哪里已经学过了，这里就不再提了。
+
+
+
+## RxJava的使用场景
+
+关于 RxJava,最常用的莫过于它结合Retrofit，Okhttp来做网络请求框架了。
+
+### RxJava 结合 OkHttp 访问网络
+
+```java
+private Observable<String> getObservable(){
+    Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
+        @Override
+        public void subscribe(final ObservableEmitter<String> emitter) {
+            okHttpClient = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://www.baidu.com")
+                    .get()
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    emitter.onError(new Exception("error"));
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String str=response.body().string();
+                    emitter.onNext(str);    //发送数据
+                    emitter.onComplete();
+                }
+            });
+        }
+    });
+    return observable;
+}
+
+private void postAsynHttp(){
+    getObservable()
+            .subscribeOn(Schedulers.io())		//执行在io线程
+            .observeOn(AndroidSchedulers.mainThread())		//切换主线程
+            .subscribe(new Observer<String>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                    Log.e("demo","onSubscribe");
+                }
+
+                @Override
+                public void onNext(String s) {
+                    Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("demo",e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+                    Log.e("demo","onComplete");
+                }
+            });
+}
+```

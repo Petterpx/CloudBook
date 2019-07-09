@@ -31,16 +31,23 @@ if ($_name&&$_pswd){
 ```php
 <?php
 /**
-    第一种方式，非表单时提交，会接受到所有post参数
  * Created by PhpStorm.
  * User: Pettepr
  * Date: 2019/6/24
  * Time: 20:58
  */
-
-$info1=isset($_POST['data'])?$_POST['data']:'';
-$res = file_get_contents('php://input');
-var_dump('file_get_contents 数据是:'.$res);
+$name='';
+if (!empty($_POST)){
+    $name=$_POST['name'];
+}else{
+    $json = file_get_contents("php://input");
+    $data = json_decode($json, true);
+    $name=$data['name'];
+}
+if ($name){
+    $response = array('code'  => 200,'message' => '请求成功','data'  => $name);
+    echo json_encode($response,JSON_UNESCAPED_UNICODE);
+}
 ```
 
 ```php
@@ -303,6 +310,137 @@ if (mysqli_connect_error()) {
             echo json_encode("注册失败", JSON_UNESCAPED_UNICODE);
         }
     }
+}
+```
+
+
+
+## 处理文件上传
+
+#### API
+
+##### $FILES数组介绍
+
+其数组中的error有7个值：
+
+​	0表示上传成功
+
+​	1表示文件大小超过了php.ini中的upload_max_filesize选项限制的值
+
+​	2表示文件大小超过了表单中max_file_size选项指定的值，
+
+​	3表示文件只有部分被上传
+
+​	4表示没有文件被上传
+
+​	6表示找不到临时文件夹
+
+​	7表示写入失败
+
+```PHP
+array (size=1)
+  'file' => 
+    array (size=5)
+      'name' => string '1_1.png' (length=7)
+      'type' => string 'image/png' (length=9)
+      'tmp_name' => string 'D:\wamp\wamp\tmp\php20B2.tmp' (length=28)
+      'error' => int 0
+      'size' => int 104398
+```
+
+##### $move_uploaded_file()介绍
+
+该方法传递两个参数：
+
+​	第一个参数：上传的文件的文件名。
+
+​	第二个参数：上传后保存的文件位置
+
+#### 实现保存多个上传文件
+
+```php
+<?php
+//查看文件信息
+var_dump($_FILES);
+$error='';
+$path = 'D:\wamp\wamp\www\image';
+foreach($_FILES as $key=>$value){
+    $file= $_FILES[$key];
+    $newfilename = fileupload($file, $path, $error);
+    echo $path.'\\'.$newfilename;
+    //将上传的文件地址保存至数据库
+}
+
+/*
+ * @param1 array $file 要上传的文件信息，包含5个元素
+ * @param2 string $path 存储位置
+ * @param3 string $error 错误信息
+ * @param4 array $type=array() MIME类型限定
+ * @param5 int $size=2000000 默认为2M
+ * @return mixed，成功返回文件名字，失败返回false
+ *
+ * */
+function fileupload($file,$path,&$error,$type=array(),$size=2000000){
+    //判断文件本身是否是有效文件
+    if (!isset($file['error'])){
+        $error='文件无效';
+        return false;
+    }
+
+    if (!is_dir($path)){
+        $error='存储路径无效';
+        return false;
+    }
+    //判断文件是否上传成功
+    switch ($file['error']){
+        case 1:
+        case 2:
+            $error='文件超过服务器允许大小';
+            return false;
+        case 3:
+            $error='文件部分上传成功';
+            return false;
+        case 4:
+            $error='用户没有选择上传的文件';
+            return false;
+        case 6:
+        case 7:
+            return false;
+    }
+    //类型判定
+    if (!empty($type)&&!in_array($file['type'],$type)){
+        $error='当前上传的文件类型不符合';
+        return false;
+    }
+
+    //大小判定
+    if ($file['size']>$size){
+        $error='文件大小超过当前允许的大小';
+    }
+
+    //文件转存
+    $newfilename = getNewName($file['name'],5);
+   if ( move_uploaded_file($file['tmp_name'],$path.'\\'. $newfilename)){
+       //成功
+       return $newfilename;
+   }else{
+       return "存入失败";
+   }
+}
+
+
+//随机生成文件名
+function getNewName($filename,$rand){
+    $newname=date('YmdHis');
+    //将参数数组合并为一个数组
+    $old=array_merge(range('a','z'),range('A','Z'),range('0','9'));
+    //将数组打乱
+    shuffle($old);
+    for ($i=0;$i<$rand;$i++){
+        $newname.=$old[$i];
+    }
+    //获取有效文件名
+    return $newname.strstr($filename, '.');
 }
 ```
 
