@@ -313,42 +313,144 @@ new Retrofit.Builder()
 Call<String> upload(@Url String url, @Part List<MultipartBody.Part> partList);
 ```
 
-网络请求代码(未简化，初始版本)
+网络请求代码(简单工具)
+
+**接口：**
 
 ```java
-OkHttpClient client=new OkHttpClient.Builder()
-        .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(20,TimeUnit.SECONDS)
-        .writeTimeout(20,TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)     //允许失败重试
-        .build();
+public interface Iupload {
+    void onResponse(Response res);
+    void onFailure(Throwable t);
+}
+```
+
+**工具类：**
+
+```java
+/**
+ * @author Petterp on 2019/7/10
+ * Summary:文件上传工具类(支持多文件)
+ * 邮箱：1509492795@qq.com
+ */
+public class RetrofitUtils {
+    private static OkHttpClient client;
+    private static IpServerPost ipServerPost;
+    private static String API="http://101.132.64.249";
+    private static final ArrayList<MultipartBody.Part> BODYS = new ArrayList<>();
+
+    public static RetrofitUtils build() {
+        BODYS.clear();
+        return Client.RETROFIT_UTILS;
+    }
+
+    private RetrofitUtils() {
+
+    }
+
+
+    private static class Client {
+        private static final RetrofitUtils RETROFIT_UTILS = new RetrofitUtils();
+    }
+
+    private OkHttpClient getClient() {
+        if (client == null) {
+            client = new OkHttpClient.Builder()
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(20, TimeUnit.SECONDS)
+                    //允许失败重试
+                    .retryOnConnectionFailure(true)
+                    .build();
+        }
+        return client;
+    }
+
+    private IpServerPost getRetrofit() {
+        if (ipServerPost == null) {
+            ipServerPost = new Retrofit.Builder()
+                    .baseUrl(RetrofitUtils.API)
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .client(getClient())
+                    .build()
+                    .create(IpServerPost.class);
+        }
+        return ipServerPost;
+    }
+
+    /**
+     * 添加文件
+     * @param file
+     * @param name
+     * @return
+     */
+    public RetrofitUtils add(File file, String name) {
+        final RequestBody requestBody = RequestBody.create(MediaType.parse(MultipartBody.FORM.toString()), file);
+        final MultipartBody.Part body = MultipartBody.Part.createFormData(name, file.getName(), requestBody);
+        BODYS.add(body);
+        return this;
+    }
+
+    public RetrofitUtils add(String url, String name) {
+        File file=new File(url);
+        final RequestBody requestBody = RequestBody.create(MediaType.parse(MultipartBody.FORM.toString()), file);
+        final MultipartBody.Part body = MultipartBody.Part.createFormData(name, file.getName(), requestBody);
+        BODYS.add(body);
+        return this;
+    }
+
+    /**
+     * 设置api,可以直接设为默认值
+     * @param api
+     * @return
+     */
+    public RetrofitUtils setHost(String api){
+        RetrofitUtils.API=api;
+        ipServerPost=null;
+        return this;
+    }
+
+    /**
+     * 获取返回值
+     * @param url
+     * @param iupload
+     */
+    public void success(String url, Iupload iupload) {
+        getRetrofit().upload(url, BODYS)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        iupload.onResponse(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        iupload.onFailure(t);
+                    }
+                });
+    }
+}
+```
+
+**实际使用**
+
+```java
 File file = new File(Environment.getExternalStorageDirectory() + "/" + "test.text");
-final RequestBody requestBody= RequestBody.create(MediaType.parse(MultipartBody.FORM.toString()),file);
-MultipartBody.Builder builder = new MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        //在这里添加服务器除了文件之外的其他参数
-        .addFormDataPart("file1",file.getName(),requestBody)
-        .addFormDataPart("file2",file.getName(),requestBody);
+        RetrofitUtils
+                .build()
+//                .setHost("http://101.132.64.249") 如果不写改为默认即可
+                .add(file,"name1")
+                .add(file,"name1")
+                .success("API/post1.php", new Iupload() {
+                    @Override
+                    public void onResponse(Response res) {
+                        Log.e("demo", String.valueOf(res.body()));
+                    }
 
-List<MultipartBody.Part> parts = builder.build().parts();
-new Retrofit.Builder()
-        .baseUrl("http://101.132.64.249")
-        .client(client)
-        .addConverterFactory(ScalarsConverterFactory.create())
-        .build()
-        .create(IpServerPost.class)
-        .upload("API/post1.php",parts)
-        .enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.e("demo",response.body());
-            }
+                    @Override
+                    public void onFailure(Throwable t) {
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.e("Demo",t.getMessage());
-            }
-        });
+                    }
+                });
 ```
 
 记得导入
@@ -356,3 +458,6 @@ new Retrofit.Builder()
 ```java
 api 'com.squareup.retrofit2:converter-scalars:2.5.0'
 ```
+
+
+
