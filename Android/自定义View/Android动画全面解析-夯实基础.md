@@ -108,7 +108,7 @@ View 动画 通过对场景里的对象不断做图像变换(平移-TranslateAni
 </set>
 ```
 
-![scale2](../../assets/scale2.gif)
+![scale2](http://ww2.sinaimg.cn/large/006tNc79ly1g4w14k623ig30u01hcqv5.gif)
 
 ### translate
 
@@ -285,7 +285,7 @@ animationDrawable.start();
     }
 ```
 
-![salpha](../../assets/salpha.gif)
+![salpha](http://ww1.sinaimg.cn/large/006tNc79ly1g4w14kxmmlg30u01hc4qp.gif)
 
 不知道你们有没有发现，使用属性动画实现的效果，动画从1f -> 0f，最后图形真的不见了，而使用View动画的，最后还会重新显示出来。没有发现的同学，请翻到上面再看一下，就能发现区别。这也就是为什么属性动画更加强大的原因之一，动画结束后的状态是会保存，而不是画面上的变一下而已。
 
@@ -334,7 +334,7 @@ TypeEvaluator 为 类型估值算法，也叫**估值器**，它的作用是**�
 
 上面这样说，肯定有点涩口,所以我们还是用张图来看。
 
-![1562226127196](../../assets/1562226127196.png)
+![1562226127196](http://ww4.sinaimg.cn/large/006tNc79ly1g4w14lera1j30gz046wfi.jpg)
 
 如上图(来源于Android官方文档)所示，它表示一个匀速动画，采用 线性插值器 和整型估值算法，在 40ms内，View 的x属性实现 从0到 40的变换。
 
@@ -404,7 +404,7 @@ public class IntEvaluator implements TypeEvaluator<Integer> {
 ObjectAnimator.ofInt(btnZheng, "width", 100,500).setDuration(1000).start();
 ```
 
-![btn](../../assets/btn.gif)
+![btn](http://ww1.sinaimg.cn/large/006tNc79ly1g4w14lydmrg30u01hc7ia.gif)
 
 就这么一句代码，就可以实现Button 从100dp到500dp的变化，是不是很神奇。在以前的Android版本中，如果我们要动态更改Button的宽度等属性，是一件比较麻烦的事，因为我们没有相应的设置方法。而最近几年，google已经提供了相应的设置方法,无疑是给我们减少了很多工作。
 
@@ -453,7 +453,7 @@ ObjectAnimator.ofInt(viewapper, "height", 0,500).setDuration(1000).start();
 
 看一下效果：
 
-![bao](../../assets/bao.gif)
+![bao](http://ww3.sinaimg.cn/large/006tNc79ly1g4w14mg114g30u01hcx0d.gif)
 
 **是不是也实现了相应的效果。**
 
@@ -540,7 +540,7 @@ public class AnimActivity extends AppCompatActivity {
 
 我们先用代码将view引入，便于接下来的测试，先看看开始的效果：
 
-![1562233006001](../../assets/1562233006001.png)
+![1562233006001](http://ww3.sinaimg.cn/large/006tNc79ly1g4w14mrqetj30b10ix3yi.jpg)
 
 因为View本身就自带了 setAlpha方法，所以我们可以直接调用属性动画的方法，这点和上面的放大Button，差别并不是很大。
 
@@ -548,7 +548,7 @@ public class AnimActivity extends AppCompatActivity {
 ObjectAnimator.ofFloat(circleView,"alpha",0f,1f).setDuration(5000).start();
 ```
 
-![cricle](../../assets/cricle.gif)
+![cricle](http://ww3.sinaimg.cn/large/006tNc79ly1g4w14nu9g3g30u01hck6i.gif)
 
 
 
@@ -645,7 +645,7 @@ public class CircleView extends View {
 
 
 
-![教我写代码](../../assets/教我写代码.jpg)
+![教我写代码](http://ww4.sinaimg.cn/large/006tNc79ly1g4w14opht7j305h045mx0.jpg)
 
 **更多Android开发知识请访问—— [Android开发日常笔记](https://github.com/Petterpx/Android_NoteBook)，欢迎Star,你的小小点赞，是对我的莫大鼓励。**
 

@@ -6,7 +6,7 @@
 
 好了，废话不多说了，我们开始吧！
 
-![img](../../assets/u=2717954147,555012927&fm=27&gp=0.jpg)
+![img](http://ww2.sinaimg.cn/large/006tNc79ly1g4w13sv7q9j30au0623yi.jpg)
 
 
 
@@ -18,7 +18,7 @@
 - 场景2——外部滑动方向和内部滑动方向不一致
 - 常见3——上面两种情况的嵌套。
 
-![1562069700952](../../assets/1562069700952.png)
+![1562069700952](http://ww2.sinaimg.cn/large/006tNc79ly1g4w13t948ej30t40c90sm.jpg)
 
 特别是场景2和场景3，我们很多人可能都会遇到，第一种呢因为方向的不一致，所以很少有冲突的时候，而后两种就没那么简单了，特别是第三种。
 
@@ -30,7 +30,7 @@
 
 如图，对于场景1，它的处理规则是：当用户左右滑动时，需要让外部的View 拦截点击事件，当用户上下滑动时，需要让内部View 拦截点击事件。这个时候我们就可以根据它们的特征来解决滑动冲突，具体来说：根据滑动时水平滑动还时竖直滑动来判断到底谁来拦截事件。
 
-![1562071242639](../../assets/1562071242639.png)
+![1562071242639](http://ww2.sinaimg.cn/large/006tNc79ly1g4w13tq2puj30fw09kt8j.jpg)
 
 如图所示，根据滑动过程中两个点之间的坐标就可以得出到底是水平滑动还时竖直滑动。如何根据坐标来得到滑动的方向呢？这个很简单。有很多方向可以参考，比如可以依据滑动路径和水平方向所形成的夹角，也可以依据水平方向和竖直方向上的距离来判断，某些特殊时候还可以依据水平和竖直方向的速度差来做判断，当然这个就是后话了。这里我们可以通过水平和竖直方向的距离差来判断，比如竖直方向滑动的距离大就判断为竖直滑动，否则判断为水平滑动。根据这个规则就可以进行下一步的解决办法制定了。
 
@@ -139,13 +139,13 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 
 首先我们要做的效果是什么呢？仿云闪付中间的这个Banner来做一个类似的。我们采用ViewPager+ViewPager嵌套来做。当然理想状态是 RecyclearView+ViewPager更好。
 
-![GIF](../../assets/GIF-1562159070419.gif)
+![GIF](http://ww4.sinaimg.cn/large/006tNc79ly1g4w1462vo3g30760evb29.gif)
 
 
 
 **自己的效果：ViewPager默认直接嵌套的效果。**
 
-![untitled](../../assets/untitled-1562153961099.gif)
+![untitled](http://ww3.sinaimg.cn/large/006tNc79ly1g4w146udrhg30a90hvqrh.gif)
 
 看起来没什么问题：
 
@@ -241,7 +241,7 @@ public class CustomViewPager extends ViewPager {
 
 再看效果：
 
-![GIF](../../assets/GIF.gif)
+![GIF](http://ww2.sinaimg.cn/large/006tNc79ly1g4w147evk3g30ai0hvqv5.gif)
 
 符合我们要求了。相应的注释也都在上面。
 
