@@ -100,3 +100,115 @@ private void postAsynHttp(){
             });
 }
 ```
+
+
+
+### RxJava 结合Retrofit
+
+#### 更改网络请求接口
+
+```java
+/**
+ * 文件下載
+ * @param fileUrl
+ * @return
+ */
+@GET
+Observable<ResponseBody> download(@Url String fileUrl);
+```
+
+#### 网络请求代码如下
+
+```java
+new Retrofit.Builder()
+        .baseUrl("http://101.132.64.249/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
+        .create(IpServerPost.class)
+        .download("/image/1.JPG")
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<ResponseBody>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+
+                    // writeResponseBodyToDisk 是我写的下载保存本地工具类,可以参考一下
+                    boolean toDisk = writeResponseBodyToDisk(responseBody);
+                    if (toDisk) {
+                        System.out.println("-----------------下载成功请查看");
+                    } else {
+                        System.out.println("---------------下载失败,请稍后重试");
+                    }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("Demo",e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+ private boolean writeResponseBodyToDisk(ResponseBody body) {
+        try {
+            //判断文件夹是否存在
+            File files = new File(Environment.getExternalStorageDirectory() + "/Download/");
+            if (!files.exists()) {
+                //不存在就创建出来
+                files.mkdirs();
+            }
+            //创建一个文件
+            File futureStudioIconFile = new File(Environment.getExternalStorageDirectory() + "/Download/ " + "download.jpg");
+            //初始化输入流
+            InputStream inputStream = null;
+            //初始化输出流
+            OutputStream outputStream = null;
+            try {
+                //设置每次读写的字节
+                byte[] fileReader = new byte[4096];
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+                //请求返回的字节流
+                inputStream = body.byteStream();
+                //创建输出流
+                outputStream = new FileOutputStream(futureStudioIconFile);
+                //进行读取操作
+                while (true) {
+                    int read = inputStream.read(fileReader);
+                    if (read == -1) {
+                        break;
+                    }
+                    //进行写入操作
+                    outputStream.write(fileReader, 0, read);
+                    fileSizeDownloaded += read;
+                }
+
+                //刷新
+                outputStream.flush();
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    //关闭输入流
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    //关闭输出流
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+```
+

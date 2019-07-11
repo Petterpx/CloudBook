@@ -151,5 +151,5 @@ Observable.create(new ObservableOnSubscribe<String>() {
 
 总结如下图：
 
-![img](E:/Android_NoteBook/Android_NoteBook/assets/1639a8ee56b13c41)
+
 
