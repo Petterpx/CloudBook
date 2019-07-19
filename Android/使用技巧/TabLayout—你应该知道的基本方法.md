@@ -72,6 +72,7 @@ public class ConsumePagerAdapter extends FragmentStatePagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
+        return sums[position];
 
     }
 }
