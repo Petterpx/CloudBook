@@ -37,11 +37,49 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+          //代表拦截返回事件，默认为false
         app:defaultNavHost="true"
           //与 NacHostFragment 关联。即指定NavHostFragment用户可以导航到的所有目标
         app:navGraph="@navigation/nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+
+
+一个 navgation.xml文件
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    /*设置首选启动页*/
+    app:startDestination="@id/fragment_one"
+    tools:ignore="UnusedNavigation">
+  //重要的就是这几个属性
+    <fragment
+        android:id="@+id/fragment_one"
+        android:name="com.example.myapplication2.fragment_one">
+        <action
+            android:id="@+id/action_fragment_one_to_fragment_two"
+            app:destination="@id/fragment_two" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_two"
+        android:name="com.example.myapplication2.fragment_two">
+        <action
+            android:id="@+id/action_fragment_two_to_fragment_three"
+            app:destination="@id/fragment_three" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_three"
+        android:name="com.example.myapplication2.fragment_three" />
+    <fragment
+        android:id="@+id/fragment_1_1"
+        android:name="com.example.myapplication2.fragment_1_1" />
+</navigation>
 ```
 
 
@@ -58,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 委托back事件
+     * 委托back事件,当Activity xml中  app:defaultNavHost="true"可以不用重写此方法
      * 若栈中有两个以上fragment,点击back会返回到上一个Fragment
      * @return
      */
@@ -90,12 +128,11 @@ public class BlankFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.blankFragment2);
-            }
-        });
+        //两种跳转方法 
+        NavHostFragment.findNavController(this).navigate(R.id.fragment_two);
+        //适用于点击事件
+      view.findViewById(R.id.btn_2)
+        .setOnClickListener(Navigation.createNavigateOnClickListener(R.id.fragment_two));
     }
 }
 ```
@@ -117,10 +154,31 @@ public class BlankFragment2 extends Fragment {
         view.findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+              	//退栈
                 Navigation.findNavController(view).navigateUp();
             }
         });
     }
 }
+```
+
+
+
+一些退栈方法：
+
+```java
+//尝试退栈到指定的fragment,最后参数为true代表弹出时包含指定fragment，否则不包含。
+//return ，如果弹出到指定栈，并且至少弹栈一次，则返回true,否则返回false
+NavHostFragment.findNavController(fragment_three.this).popBackStack(R.id.fragment_two, true)
+```
+
+```java
+//退到前一个栈   
+Navigation.findNavController(view).navigateUp();
+```
+
+```java
+//直接导航到目的地
+NavHostFragment.findNavController(fragment_three.this).navigate(R.id.action_fragment_three_to_fragment_one);
 ```
 
