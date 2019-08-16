@@ -2,8 +2,6 @@
 
 [官网链接](https://developer.android.google.cn/guide/navigation/navigation-getting-started)
 
-
-
 ## 使用步骤：
 
 右击res,创建 navigation 文件夹，右击创建你的导航布局
@@ -164,7 +162,7 @@ public class BlankFragment2 extends Fragment {
 
 
 
-一些退栈方法：
+### 一些退栈方法：
 
 ```java
 //尝试退栈到指定的fragment,最后参数为true代表弹出时包含指定fragment，否则不包含。
@@ -182,3 +180,69 @@ Navigation.findNavController(view).navigateUp();
 NavHostFragment.findNavController(fragment_three.this).navigate(R.id.action_fragment_three_to_fragment_one);
 ```
 
+
+
+### 关于返回之后，重新执行onCreateVIew方法
+
+> 观察可以发现，视图并没有销毁，只是解除绑定，所以：
+>
+> 将View设定为全局变量，onCreateView中判断View是否为null.根据状态来判断是否初始化还是直接返回。
+
+
+
+### 数据传递方法，设置safeargs
+
+[官网Demo](https://developer.android.google.cn/guide/navigation/navigation-pass-data#java)
+
+在设置相应的arg之后，build后回生成相应的类。接收端后缀为 Args,传递端为Directions.
+
+导入依赖：
+
+```java
+(哪里用，在具体model下添加)
+apply plugin : "androidx.navigation.safeargs"
+
+在 dependencies中(Project下)
+classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.1.0-beta02"
+```
+
+使用方法：
+
+首先在navigation Host中，也就是 导航管理中
+
+```xml
+ <fragment
+        android:id="@+id/createUserDelegate"
+        tools:layout="@layout/delegate_user_create"
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+```
+
+注意，添加的位置为需要接受的Fragment。
+
+或者在视图页面添加，更加简单。
+
+
+
+**代码中使用：**
+
+传递端：
+
+RegisterDelegate
+
+```java
+Navigation.findNavController(getRootView()).navigate(
+  RegisterDelegateDirections.actionRegisterDelegateToCreateUserDelegate(phone)
+  
+);
+```
+
+接收端：
+
+CreateUserDelegate
+
+```java
+CreateUserDelegateArgs.fromBundle(getArguments()).getPhone()
+```
