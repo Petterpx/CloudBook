@@ -414,11 +414,11 @@ public static void test1(){
     
         //1.获取通道
         FileChannel channel=rafi.getChannel();
-    
+        
         //2.分配指定大小的缓冲区
         ByteBuffer buf1 =ByteBuffer.allocate(100);
         ByteBuffer buf2 = ByteBuffer.allocate(1024);
-    
+        
         //3.分散读取
         ByteBuffer[] bufs={buf1,buf2};
         channel.read(bufs);
@@ -428,11 +428,11 @@ public static void test1(){
         System.out.println(new String(bufs[0].array(),0,bufs[0].limit()));
         System.out.println("----------");
         System.out.println(new String(bufs[1].array(),0,bufs[1].limit()));
-    
+        
         //4.聚集写入
         RandomAccessFile raf2=new RandomAccessFile("D:demo2.txt","rw");
         FileChannel channel2=raf2.getChannel();
-    
+        
         channel2.write(bufs);
     }
 
@@ -498,10 +498,3 @@ public static void test1(){
 #### 二进制序列和字符之间如何对应呢？
 
 > 为了解决二进制序列与字符之间的对应关系，这就需要字符集了。所谓字符集，就是为每个字符编个号码而已。任何人都可以制定自己独有的字符集明知要为每个字符编个号码即可。当然，如果每个人都制定自己独有的字符集，那程序就没法交流了。
-
-
-
-
-
-Java7的 NIO.2
-
