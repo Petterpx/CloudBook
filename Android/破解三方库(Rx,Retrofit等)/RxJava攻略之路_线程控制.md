@@ -212,3 +212,29 @@ new Retrofit.Builder()
         }
 ```
 
+
+
+
+
+
+
+
+
+
+
+```
+响应body：{"result":{"c":200,"m":"操作成功"},"data":{"groupChatId":"a09f81996bb145618337a6cf00ce2778","groupChatName":"一个面试机会","groupChatHeadUrl":"https://pet-im-online.oss-cn-beijing.aliyuncs.com/app/group/head/default/group_default.png","isAllowSearch":1,"isAllowInvite":1,"type":0,"notice":"","intro":"","ownerId":"5e03391a77174a9d990e4e736d2d81a8","members":[{"groupChatId":"a09f81996bb145618337a6cf00ce2778","userId":"5e03391a77174a9d990e4e736d2d81a8","userName":"1辉","userHeadUrl":"https://pet-im-online.oss-cn-beijing.aliyuncs.com/app/user/head/default/default.png","alias":"","type":2},{"groupChatId":"a09f81996bb145618337a6cf00ce2778","userId":"6e77bc23f4b5460f9cbd31e6ea69c4c5","userName":"赵海蛟","userHeadUrl":"https://pet-im-online.oss-cn-beijing.aliyuncs.com/app/user/head/default/default.png","alias":"","type":0},{"groupChatId":"a09f81996bb145618337a6cf00ce2778","userId":"be3e975e9d4540d78f3dae29c4b9ae6a","userName":"史艺辉","userHeadUrl":"https://jxl-dev.oss-cn-beijing.aliyuncs.com/app/user/head/2019/10/30/fa4be885c48c4386aab3c25149ddf9b2.jpg","alias":"","type":0},{"groupChatId":"a09f81996bb145618337a6cf00ce2778","userId":"ece60b3ae2ad4049a633a046e63a4e1c","userName":"张润潮","userHeadUrl":"https://jxl-dev.oss-cn-beijing.aliyuncs.com/app/user/head/2019/10/30/80a1c34e4b7f42e7a7561bd161ee8a5d.png?x-oss-process=image/quality,q_50/resize,l_100","alias":"","type":0},{"groupChatId":"a09f81996bb145618337a6cf00ce2778","userId":"mznxksaizuxcyxzuxxs8a7s6d7392isa","userName":"杨过","userHeadUrl":"https://jxl-dev.oss-cn-beijing.aliyuncs.com/app/user/head/2019/10/29/ec665da7b19b4087b30f60edfc028c10.png?x-oss-process=image/quality,q_50/resize,l_100","alias":"","type":0}]},"refreshTime":1572501371257}
+2019-10-31 13:56:09.034 6828-7974/com.people.wpy E/PRETTY_LOGGER-okhttp: └──
+```
+
+
+
+
+
+```
+userIds":["a09f81996bb145618337a6cf00ce2778","a09f81996bb145618337a6cf00ce2778","a09f81996bb145618337a6cf00ce2778","a09f81996bb145618337a6cf00ce2778","a09f81996bb145618337a6cf00ce2778"],"deptIds":[],"deviceToken":"5616fcc4f9bdb3f7a132e642fc0e4541","deviceType":"3","groupChatId":"a09f81996bb145618337a6cf00ce2778"}
+2019-10-31 13:57:10.917 6828-7974/com.people.wpy E/PRETTY_LOGGER-okhttp: └────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+
+
+
