@@ -68,3 +68,4 @@ Adb install ....apk
 
 
 
+android adb install apk 
