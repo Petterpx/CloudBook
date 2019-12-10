@@ -36,6 +36,8 @@ touch ../a.txt
 
 
 
+cp -r /root/jdk-11.0.5  /usr/local/java
+
 
 
 #### 复制文件夹到另一个文件夹
@@ -120,3 +122,13 @@ fi
 
 
 
+#### 连接Mysql数据库
+
+```
+mysql -u root -p
+jdbc:mysal://localhost:3306/
+```
+
+
+
+rpm -e 

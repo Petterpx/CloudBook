@@ -653,5 +653,3 @@ public class CircleView extends View {
 
 - Android开发艺术探索
 
-
-
