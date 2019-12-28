@@ -4,6 +4,12 @@
 https://blog.csdn.net/le920309/article/details/103134203
 ```
 
+
+
+Android 存储访问框架 https://developer.android.com/guide/topics/providers/document-provider
+
+
+
 ```java
     public Uri saveSignImage(String fileName) {
         try {
@@ -271,4 +277,31 @@ public class TestUtils {
 }
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+ LatteLogger.e("demo", fileName + "：当前下载的目录" + filelUri);
+                                LatteLogger.e("demo", "真实目录" + filelUri);
+//保存文件
+FileInfoSqlManager.getInstance().saveFile(fileName, filelUri);
+
+
+
+
+```
+
+
+
+
 
