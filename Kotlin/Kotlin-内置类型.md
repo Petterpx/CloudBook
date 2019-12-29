@@ -345,3 +345,58 @@ fun test1(): Triple<Int, String, String> {
 }
 ```
 
+
+
+
+
+### 简易计算器
+
+```kotlin
+fun main() {
+    val res: String = readLine()!!
+    if (res.isEmpty()) {
+        throw RuntimeException("不可为null")
+    }
+
+    val operations = mapOf(
+        "+" to ::plus,
+        "-" to ::minus,
+        "*" to ::times,
+        "/" to ::div
+    )
+
+    when {
+        "+" in res -> {
+            val (a, b) = res.split("+")
+            println(operations["+"]?.invoke(a.toInt(), b.toInt()))
+        }
+        "-" in res -> {
+
+        }
+
+        "*" in res -> {
+
+        }
+        "/" in res -> {
+
+        }
+    }
+}
+
+fun plus(a: Int, b: Int): Int {
+    return a + b
+}
+
+fun minus(a: Int, b: Int): Int {
+    return a + b
+}
+
+fun times(a: Int, b: Int): Int {
+    return a + b
+}
+
+fun div(a: Int, b: Int): Int {
+    return a + b
+}
+```
+

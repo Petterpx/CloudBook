@@ -3,7 +3,7 @@
 ### 什么是Kotlin? Kotlin学习指南
 
 ```
-Kotlin就是一门可以运行在 jAVA虚拟机，Android,浏览器上的静态语言，它与Java100%兼容，如果你对Java非常熟悉，那么你就会发现Kotlin除了自己的标题库之外，大多任然使用经典的Java 集合框架。
+Kotlin就是一门可以运行在 JAVA虚拟机，Android,浏览器上的静态语言，它与Java100%兼容，如果你对Java非常熟悉，那么你就会发现Kotlin除了自己的标题库之外，大多任然使用经典的Java 集合框架。
 
 学习目标
 1. 学会使用 Kotlin
@@ -1898,7 +1898,6 @@ fun main(args: Array<String>) {
 
 
 
-
 ---
 
 #### 函数复合
@@ -1940,7 +1939,6 @@ fun main(args: Array<String>) {
       }
   }
   ```
-
 
 
 
@@ -2007,7 +2005,6 @@ fun main(args: Array<String>) {
       println(t2("Petterp"))
   }
   ```
-
 
 ---
 
