@@ -1647,16 +1647,7 @@ fun main(args: Array<String>) {
 
   ```kotlin
   fun main() {
-      val list = listOf(
-          1..20,
-          6..100,
-          200..220
-      )
-      //flatMap相当于 把几个小的list转换到一个大的List
-  //    list.flatMap { it }.forEach(::println)
-  
-      //如果现在要给每个值前加上 No.
-      list.flatMap { intRange ->
+    .flatMap { intRange ->
           intRange.map { intElement ->
               "No.$intElement"
           }
@@ -1668,7 +1659,7 @@ fun main(args: Array<String>) {
       }.forEach(::println)
   }
   ```
-
+  
 - fold （用于求和并加上一个初始值因为fold不同于map,fold对初始值没有严格限制，因此fold还可以进行类型变换）
 
   ```kotlin
@@ -2100,5 +2091,6 @@ fun main(args: Array<String>) {
      ```
      java 的List-> 		Kotlin的List<*>
      ```
+
 
 
