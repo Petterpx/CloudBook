@@ -322,4 +322,51 @@ println(listOf(1, 2, 3).sum())
 
 ## SAM
 
- 
+1.  Java：一个参数类型为 **只有一个方法的接口** 的方法
+2. 一个参数类型为 **只有一个方法的Java接口** 的java方法
+
+### Sam转换支持对比
+
+|                | **Java**   | **Kotlin** |
+| -------------- | ---------- | :--------- |
+| **Java接口**   | **支持**   | **支持**   |
+| **Kotlin接口** | **支持**   | **不支持** |
+| **Java方法**   | **支持**   | **支持**   |
+| **Kotlin函数** | **支持**   | **不支持** |
+| **抽象类**     | **不支持** | **不支持** |
+
+
+
+
+
+## Demo练习
+
+### 统计字符个数
+
+```kotlin
+File("kotlin.iml").readText().toCharArray().filter { !it.isWhitespace() }
+        .groupBy { it }.map {
+            it.key+"="+it.value.size
+        }.forEach(::println)
+```
+
+```
+<=12
+?=2
+x=2
+m=9
+l=18
+v=4
+e=43
+...
+```
+
+
+
+### groupBy
+
+分组
+
+![image-20191231112839615](https://tva1.sinaimg.cn/large/006tNbRwly1gafquvmhopj30qu034t93.jpg)
+
+![image-20191231113027624](https://tva1.sinaimg.cn/large/006tNbRwly1gafqwr1x1tj30z905qdgn.jpg)
