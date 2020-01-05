@@ -682,5 +682,207 @@ fun main() {
 
 
 
+## Kotlin的Json序列化
 
+使用Gson,MoShi,K.S
+
+```kotlin
+@JsonClass(generateAdapter = true)
+@Serializable
+data class Person(val name: String, val age: Int = 18)
+
+@ImplicitReflectionSerializer
+fun main() {
+    var s1 =0
+    var s2 =0
+    var s3 =0
+    for (i in 1..100000){
+        s1+= gson()
+        s2+= moshi()
+        s3+= kotlinks()
+    }
+    println("gson $s1")
+    println("moshi $s2")
+    println("kotlinx $s3")
+}
+
+fun gson(): Int {
+    val currentTimeMillis = System.currentTimeMillis()
+    val gson = Gson()
+    println(gson.toJson(Person("Petterp")))
+    println(gson.fromJson("{\"name\":\"petterp\",\"age\":20}", Person::class.java))
+
+    return (System.currentTimeMillis() - currentTimeMillis).toInt()
+
+}
+
+fun moshi(): Int {
+    val currentTimeMillis = System.currentTimeMillis()
+
+    val moshi = Moshi.Builder()
+        .build()
+    val jsonAdapter = moshi.adapter(Person::class.java)
+    println(jsonAdapter.toJson(Person("petterp", 20)))
+    println(jsonAdapter.fromJson("{\"name\":\"petterp\",\"age\":20}"))
+    return (System.currentTimeMillis() - currentTimeMillis).toInt()
+
+}
+
+@ImplicitReflectionSerializer
+fun kotlinks(): Int {
+    val currentTimeMillis = System.currentTimeMillis()
+
+
+    println(Json.stringify(Person("name", 20)))
+    println(Json.parse<Person>("{\"name\":\"petterp\",\"age\":20}"))
+    println("Kotlinx:" + (System.currentTimeMillis() - currentTimeMillis))
+
+    return (System.currentTimeMillis() - currentTimeMillis).toInt()
+
+
+}
+```
+
+配置模板
+
+#### Gson
+
+```kotlin
+implementation 'com.google.code.gson:gson:2.8.6'
+```
+
+#### MoShi
+
+```kotlin
+apply plugin: 'kotlin-kapt'
+
+implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
+```
+
+#### kotlinx
+
+```kotlin
+apply plugin: 'kotlinx-serialization'
+ext.kotlin_version = '1.3.61'
+
+implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
+```
+
+```groovy
+ext.kotlin_version = '1.3.61'
+classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+```
+
+
+
+#### 性能对比
+
+- 测试设备 mbpro2018 Android Studio3.5
+- 测试次数10w次，最终结果
+
+```kotlin
+gson 2557
+moshi 1386
+kotlinx 1511
+```
+
+
+
+#### 框架对比
+
+|        | Gson      | MoShi      | K.S  |
+| ------ | --------- | ---------- | ---- |
+| 空类型 | 否        | 反射，注解 | 是   |
+| 默认值 | 否        | 反射，注解 | 是   |
+| init块 | NoArg插件 | 反射，注解 | 是   |
+| Java类 | 是        | 是         | 否   |
+| 跨平台 | 否        | 否         | 是   |
+
+
+
+
+
+## 递归整型列表
+
+```kotlin
+sealed class IntList {
+    object Nil : IntList() {
+        override fun toString(): String {
+            return "Nil"
+        }
+    }
+
+    data class Cons(val head: Int, val tail: IntList) : IntList() {
+        override fun toString(): String {
+            return "$head,$tail"
+        }
+    }
+
+    fun joinToString(sep: Char = ','): String {
+        return when (this) {
+            Nil -> "Nil"
+            is Cons -> {
+                "$head$sep${tail.joinToString(sep)}"
+            }
+        }
+    }
+}
+
+fun IntList.sum(): Int {
+    return when (this) {
+        IntList.Nil -> 0
+        is IntList.Cons -> head + tail.sum()
+    }
+}
+
+operator fun IntList.component1(): Int? {
+    return when (this) {
+        IntList.Nil -> null
+        is IntList.Cons -> head
+    }
+}
+
+operator fun IntList.component2(): Int? {
+    return when (this) {
+        IntList.Nil -> null
+        is IntList.Cons -> tail.component1()
+    }
+}
+
+operator fun IntList.component3(): Int? {
+    return when (this) {
+        IntList.Nil -> null
+        is IntList.Cons -> tail.component2()
+    }
+}
+
+fun initListOf(vararg ints: Int): IntList {
+    return when (ints.size) {
+        0 -> IntList.Nil
+        else -> {
+            IntList.Cons(
+                ints[0],
+                initListOf(*(ints.slice(1 until ints.size).toIntArray()))
+            )
+        }
+    }
+}
+
+fun main() {
+    val list = initListOf(0, 1, 2, 3)
+    println(list.toString())
+    println(list.joinToString('-'))
+    println(list.sum())
+
+    //解构
+    val (first, second, third) = list
+    println(first)
+    println(second)
+    println(third)
+
+//    val (a, b, c, d, e) = listOf<Int>()
+}
+```
 
