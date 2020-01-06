@@ -335,7 +335,29 @@ class Test1 : NotificationBuilder<Test1>() {
 
 ![image-20200105222110821](https://tva1.sinaimg.cn/large/006tNbRwly1gam1tddupuj30r006575g.jpg)
 
-报错暂时 Todo.
+报错已解决，原因是getValue方法中的thisRef参数，也就是当前属性对象需要null处理。加上?即可.
+
+新问题todo:为什么在类中无需添加?，而在类中定义一个方法，然后继续使用 局部属性代理 依然报错，不太明白？
+
+> 一些基础 
+>
+> operator fun <T : AbsModel> getValue(thisRef: Any?, property: KProperty<*>): T {
+>         return Models.run {
+>             //capitalize首字母大写
+>             property.name.capitalize().get()
+>         }
+>     }
+>
+> > 对于只读属性(也就是说val属性), 它的委托必须提供一个名为getValue()的函数。
+> > thisRef: Any? 必须是该属性当前类或者基类(Any是任何类的基类)。
+> > property: KProperty<*>这个参数的类型必须是 KProperty<*> , 或者是它的基类。
+> > getValue()返回值类型必须与属性类型相同(或者是它的子类型)。
+> > value:<类型>这个参数的类型必须与属性类型相同, 或者是它的基类
+> > 方法名不能改必须是getValue、setValue，并且必须用operator关键字修饰
+>
+> 参考https://www.jianshu.com/p/30541df7829a
+
+已解决。**事实上属性代理对于getValue或者setValue中的 thisRef类型没有明确要求，如果属性代理是局部变量，则它是不会绑到函数所在的类上，所以局部变量的情况时，thisRef 一定是null.**
 
 ```kotlin
 fun initModels() {
@@ -359,7 +381,7 @@ object Models {
 
 
 object ModelDelegate {
-    operator fun <T : AbsModel> getValue(thisRef: Any, property: KProperty<*>): T {
+    operator fun <T : AbsModel> getValue(thisRef: Any?, property: KProperty<*>): T {
         return Models.run {
             //capitalize首字母大写
             property.name.capitalize().get()
