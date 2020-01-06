@@ -227,3 +227,38 @@ fun main() {
 
 ## Model映射
 
+```kotlin
+data class User(var name: String)
+
+
+inline fun <reified From : Any, reified To : Any> From.mapAs(): To {
+    return From::class.memberProperties.map { it.name to it.get(this) }
+        .toMap().mapAs()
+}
+
+inline fun <reified To : Any> Map<String, Any?>.mapAs(): To {
+    //反射拿到构造函数
+    return To::class.primaryConstructor!!.let {
+        it.parameters.map { kParameter ->
+            //获得对应的value，判断参数是否为null,如果参数允许为null，直接返回null,否则抛出异常
+            kParameter to (this[kParameter.name] ?: if (kParameter.type.isMarkedNullable) null
+            else throw IllegalArgumentException("${kParameter.name} is required but missing"))
+        }.toMap().let(it::callBy)
+    }
+}
+
+
+fun main() {
+    val user = User("petterp")
+    val userVO: User = user.mapAs()
+    println(userVO)
+
+    val userMap = mapOf(
+        "name" to "petterp"
+    )
+    val mapAs: User = userMap.mapAs()
+    println(mapAs)
+
+}
+```
+
