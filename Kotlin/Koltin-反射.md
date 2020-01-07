@@ -1,4 +1,4 @@
-# Koltin-反射
+#  Koltin-反射
 
 ## 反射的基本
 
@@ -261,4 +261,75 @@ fun main() {
 
 }
 ```
+
+
+
+## 可释放对象引用的不可空类型
+
+```kotlin
+fun <T : Any> releaseableNotNUll() = ReleasableNotNull<T>()
+
+class ReleasableNotNull<T : Any> : ReadWriteProperty<Any, T> {
+    private var value: T? = null
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return value ?: throw  IllegalStateException("Not initialized or released already")
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        this.value = value
+    }
+
+    fun isInitialized() = value != null
+
+    fun release() {
+        value = null
+    }
+}
+
+inline val KProperty0<*>.isInitialized: Boolean
+    get() {
+        isAccessible = true
+        //判断是否初始化
+        return (this.getDelegate() as? ReleasableNotNull<*>)?.isInitialized()
+            ?: throw IllegalAccessException("Delegate is not an instance of ReleasableNotNull or is null")
+    }
+
+fun KProperty0<*>.release() {
+    isAccessible = true
+    (this.getDelegate() as? ReleasableNotNull<*>)?.release()
+}
+
+class Bitmap(var width:Int,var height:Int)
+
+class Activity {
+    private var bitmap by releaseableNotNUll<Bitmap>()
+
+    fun onCreate() {
+        println(::bitmap.isInitialized)
+        bitmap= Bitmap(111,111)
+        println(::bitmap.isInitialized)
+    }
+
+    fun onDestory() {
+        println(::bitmap.release())
+    }
+
+    fun sot(){
+        println(::bitmap.isInitialized)
+    }
+}
+
+fun main() {
+    val activity=Activity()
+    activity.onCreate()
+    activity.onDestory()
+    //判断对象是为null
+    activity.sot()
+
+}
+```
+
+
+
+## 插件化加载类
 
