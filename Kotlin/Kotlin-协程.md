@@ -21,8 +21,6 @@
 
 ***协程并不会提升性能,协程只是会提高代码的可读性***
 
-更简单点说，协程只是一个线程框架，只不过借助于Kotlin的语言特性，它更方便罢了
-
 ### 协程与线程
 
 协程 **Coroutine** : 指语言实现的协程，运行在内核线程上
@@ -69,7 +67,7 @@
 - 挂起函数调用时包含了协程 “挂起” 的语义
 - 挂起函数返回时则包含了协程 ”恢复“ 的语义
 
-***Kotlin通过 Continuuation 实现挂起函数***
+***Kotlin内部通过 Continuuation 实现挂起函数***
 
 ```kotlin
 public interface Continuation<in T> {
@@ -194,7 +192,7 @@ public fun <T> (suspend () -> T).startCoroutine(
 
 
 
-### 协程上下文
+### 协程上下文(CoroutineContext)
 
 ```kotlin
    suspend {  }.startCoroutine(object:Continuation<Unit>{
@@ -217,11 +215,45 @@ public fun <T> (suspend () -> T).startCoroutine(
 
 ### 拦截器
 
-![image-20200108213546179](https://tva1.sinaimg.cn/large/006tNbRwly1gaphd1nxhrj30qc0afdhx.jpg)
-
-- 拦截器 ***ContinuationInterceptor*** 是一类协程上下文元素
+- 拦截器 ***ContinuationInterceptor*** 是 协程上下文(CoroutineContext) 元素
 - 可以对协程上下文所在协程的 ***Contiunation*** 进行拦截
 
+![image-20200108213546179](https://tva1.sinaimg.cn/large/006tNbRwly1gaphd1nxhrj30qc0afdhx.jpg)
 
 
-#### Continuuation执行示意
+
+#### Continuuation执行流程图
+
+
+
+  协程挂起恢复要点
+
+- 协程体内的代码都是通过 Continuation.resuumeWith 调调用
+- 每调用一次 label 加1，每一个挂起点对应一个 case 分支
+- 挂起函数在返回 CORUTINE_SUUSPENDED 时才会挂起
+
+
+
+## 协程的启动模式
+
+| 启动模式     | 功能特性                                                     |
+| ------------ | ------------------------------------------------------------ |
+| DEFAULT      | 立即开始调度协程体，调度前若取消则直接取消                   |
+| ATOMIC       | 立即开始调度，且在第一个挂起点不能取消                       |
+| LAZY         | 只有在需要(start/join/await)时开始调度                       |
+| UNDISPATCHED | 立即在当前线程执行协程体，直到遇到第一个挂起点(后面取决于调度器) |
+
+
+
+#### 其他特性
+
+- Channel 热数据流，并发安全的通信机制
+- Flow :冷数据流，协程的响应式 API
+- Select 可以对多个挂起事件进行等待
+
+
+
+## Channel
+
+- 非阻塞的通信基础设置
+- 类似于 BlickingQueue+挂起函数
