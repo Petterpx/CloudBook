@@ -1,10 +1,24 @@
 # Kotlin-协程使用手册
 
-## 什么是协程？
+HI，新同学，很高兴你终于看到了这篇博文，在学习之前，我希望你有一定的**基础**，至少使用过。接下来，将从实例开始，带你对协程有一个自己的认知。
 
-挂起，恢复，这里所说的挂起恢复指的是在线程内
+***为什么是自己的认知？***
+
+我相信大多数人在学习 协程的时候，都在追寻一个问题，**协程是什么？协程有什么用？**
+
+然后网上各种解释，协程就是一个线程框架，协程节省效率，协程比线程更好使用，协程如何如何，但哪些标题式的解释，我们真的能明白吗，我们为什么不先从语法上入手？然后再去探究它的实现，如果你都不了解它，何谈实现原理？
+
+网上对于协程的理解多数人认为它是一个轻量级的线程，官方也是这样解释的。但是作为开发者，协程并不只是一个简单的线程框架，它更多的是借助于 kt 这门语言，改变我们常规的编码方式(比如java编码习惯)。
+
+举个简单的例子如下：
+
+在 java 中，我们可能不会显式去关注null指针，泛型等问题，但在 kt 中，这些问题，需要开发者强制去处理，对于我们java 中常写的回调来说，回调是再简单不过的事，回调嵌套也是常见的事。但在 kt 中，这种方式有更好的解决方案，那就是 协程。它可以帮你以同步的方式，写出异步的操作，而核心的原则就是 ***挂起，恢复***。这两个词，现在可能听起来很迷，但当你逐步使用协程时，我相信你会有自己的理解。不会纠结于协程到底是什么。
+
+更希望大家从kt 的这门语言上去看协程究竟是什么？它到底能给我们带来哪些畅快体验，从而真正理解 协程
 
 
+
+首先，借助于一张图，加深大家对于 挂起，恢复的理解
 
 挂起，恢复听起来很生硬，那该怎么理解呢？
 
@@ -462,3 +476,183 @@ main-抛出异常
 ```
 
 ***注意：如果其中一个子协程失败，则第一个 playGame 和等待中的父协程都会被取消***
+
+
+
+## 协程上下文和调度器
+
+协程总是运行在以 **coroutineContext** 为代表的上下文中，协程上下文是各种不同元素的集合,事实上， **coroutineContext** 就是一个存储协程信息的context
+
+![image-20200111154205812](https://tva1.sinaimg.cn/large/006tNbRwly1gaso00xm4vj30r006ijsf.jpg)
+
+
+
+### 调度器
+
+**coroutineContext** 包含了**dispatchers**,我们可以借助其限制协程的工作线程。
+
+分别有如下几种：
+
+- Dispatchers.Default	 协程默认线程
+- Dispatchers.IO    io线程
+- Dispatchers.Main  主线程
+- Dispatchers.Unconfined 无限制，将直接运行在当前线程
+
+
+
+### 子协程
+
+当一个协程被其他协程在 CoroutineScope 启动时，它将通过 **CoroutineScope.CoroutineContext** 来承袭上下文，并且这个新协程将成为父协程的子作业。当一个父协程被取消时，同时意味着所有的子协程也会取消。
+
+然而，如果此时用 GlobalScope.launch启动子协程，则它与父协程的作用域将无关并且独立运行。
+
+```kotlin
+    val a = GlobalScope.launch {
+        GlobalScope.launch {
+            println("使用GlobalScope.launch启动")
+            delay(1000)
+            println("GlobalScope.launch-延迟结束")
+        }
+
+        launch {
+            println("使用 launch 启动")
+            delay(1000)
+            println("launch-延迟结束")
+        }
+    }
+    delay(500)
+    println("取消父launch")
+    a.cancel()
+    delay(1000)
+```
+
+```
+使用GlobalScope.launch启动
+使用 launch 启动
+取消父launch
+GlobalScope.launch-延迟结束
+```
+
+
+
+### join
+
+使用 join 等待所有子协程执行完任务。
+
+```kotlin
+suspend fun main() {
+    val a = GlobalScope.launch {
+        GlobalScope.launch {
+            println("使用GlobalScope.launch启动")
+            delay(1000)
+            println("GlobalScope.launch-延迟结束")
+        }
+
+        launch {
+            println("使用 launch 启动")
+            delay(1000)
+            println("launch-延迟结束")
+        }
+    }
+   a.join()
+}
+```
+
+在上面main函数中，GlobalScope.launch启动的协程将立即独立执行，如果不使用join,则main可能瞬间执行完成，从而无法看不到效果。使用join方法从而使得 main 所在的协程暂停，直到 GlobalScope.launch 执行完成。
+
+
+
+### 指定协程名
+
+使用 ***+*** 操作符来指定
+
+```kotlin
+   GlobalScope.launch(Dispatchers.Default+CoroutineName("test")){
+        println(Thread.currentThread().name)
+    }.join()
+```
+
+这里使用了 jvm参数  ***-Dkotlinx.coroutines.debug***
+
+**如何配置jvm参数**:Android Studio,Intellij同理
+
+![image-20200111173719310](https://tva1.sinaimg.cn/large/006tNbRwly1gasrbuu1wrj30xr0bvdiq.jpg)
+
+
+
+### 协程作用域
+
+在我们了解了上面的概念之后，我们开始将前面学到的结合在一起。定义一个全局的 协程。
+
+```kotlin
+class Main4Activity : AppCompatActivity() {
+    private val mainScope = CoroutineScope(Dispatchers.Default)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main4)
+      
+        btn_start.setOnClickListener {
+            mainScope.launch {
+                //一波操作后
+                launch(Dispatchers.Main) {
+                    toast("one")
+                }
+            }
+            Log.e("demo","123")
+            mainScope.launch (Dispatchers.Main) {
+                delay(3000)
+                    toastCenter("two")
+            }
+        }
+
+        btn_cancel.setOnClickListener {
+            onDestrxx()
+        }
+
+    }
+
+    fun onDestrxx() {
+        mainScope.cancel()
+    }
+}
+```
+
+我们再Activity中声明了一个 CoroutineScope 对象，然后创建了一些作用域，这样当我们Activity destory的时候，就可以全部销毁。
+
+> 这里为了节省代码，仿 **onDestory** 的作用
+
+效果，点击btn1之后，再点击btn2,将只会弹出一个toast,第二个toast将不会弹出
+
+
+
+### 线程局部数据
+
+将一些局部数据传递到协程之间通过 ThreadLoacl即可完成。
+
+```kotlin
+suspend fun main() {
+    val threadLocal = ThreadLocal<String>()
+    threadLocal.set("main")
+    GlobalScope.launch(Dispatchers.Default+threadLocal.asContextElement(value = "123")) {
+        println("thread-${Thread.currentThread().name},value=${threadLocal.get()}")
+        println("thread-${Thread.currentThread().name},value=${threadLocal.get()}")
+    }.join()
+    println("thread-${Thread.currentThread().name},value=${threadLocal.get()}")
+    delay(1000)
+    println("thread-${Thread.currentThread().name},value=${threadLocal.get()}")
+}
+```
+
+```
+thread-DefaultDispatcher-worker-1 @coroutine#1,value=123
+thread-DefaultDispatcher-worker-1 @coroutine#1,value=123
+thread-main,value=main
+thread-kotlinx.coroutines.DefaultExecutor,value=null
+```
+
+> 你可能会疑问**，为什么delay 之后，threadloadl.get为null**?
+>
+> 请注意main函数前面加了一个 suspend,而main函数内部就相当于协程体，当我们直接调用 GlobalScope.launch 时，它直接独立运行，此时内部的 **coroutineContext** 为我们手动传递的。
+>
+> 而当我们调用了 delay之后，直接挂起协程，此时我们的main函数中的 **coroutineContext** 即为默认值null,于是get为null
+
