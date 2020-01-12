@@ -840,6 +840,8 @@ flowOf("123","123").collect{
 
 ### 过渡性流操作符
 
+#### map
+
 使用map实现数据转换
 
 ```kotlin
@@ -855,9 +857,163 @@ runBlocking {
 
 
 
-### transform
+### 转换操作符
 
-简易的流转换操作符，可以用来模仿简单的转换，例如map和 filter ,或者实施更复杂一些的转换。
+#### transform
 
- 
+使用transform ，我们可以在执行异步请求之前发射一个字符串并跟踪这个响应
+
+```kotlin
+    runBlocking {
+        (1..3).asFlow()
+            .transform {
+                request ->
+                emit("test-$request")
+                //耗时操作
+                delay(500)
+                emit(request)
+            }
+            .collect { value -> println(value) }
+    }
+```
+
+```
+test-1
+1
+test-2
+2
+test-3
+3
+```
+
+
+
+### 限长操作符
+
+> 在 流 触及相应限制的时候会将它的执行取消。协程中的取消操作总是通过抛出异常来执行，这样所有的资源管理函数(try{},finally{}块 会在取消的情况下正常运行
+
+#### take
+
+获取指定个数的发射个数，到达上限将停止发射
+
+```kotlin
+  runBlocking {
+        (1..3).asFlow()
+            .take(1)
+            .collect { value -> println(value) }
+    }
+```
+
+```kotlin
+1  //结果只有一个
+```
+
+
+
+### 末端流操作符
+
+#### toList
+
+```kotlin
+//toList
+    runBlocking {
+        (1..3).asFlow()
+            .toList().let(::println)
+    }
+```
+
+```
+[1, 2, 3]
+```
+
+
+
+#### toSet
+
+```kotlin
+//toSet
+    runBlocking {
+        (1..3).asFlow()
+            .toSet().let(::println)
+    }
+```
+
+```
+[1, 2, 3]
+```
+
+
+
+#### first
+
+将流规约为单个值。即只发送第一个数据
+
+```
+ runBlocking {
+        (1..3).asFlow()
+            .first().let(::println)
+    }
+```
+
+```
+1
+```
+
+
+
+#### single
+
+将流规约为单个值。即只发送第一个数据，不同的是，如果发送数据大于1个，将抛出 ***IllegalStateException***
+
+```kotlin
+ //single
+    runBlocking {
+        flowOf(1,2).single().let(::println)
+      	//flowOf(1).single().let(::println)
+    }
+```
+
+```kotlin
+1 
+Exception in thread "main" java.lang.IllegalStateException: Expected only one element
+```
+
+
+
+#### reduce
+
+对流进行累加。数据累加
+
+```kotlin
+runBlocking {
+        (1..3).asFlow()
+            .reduce { a, b -> a + b }.let(::println)
+    }
+```
+
+```
+6
+```
+
+
+
+#### fold
+
+对流进行累加。数据累加。不同于 reduce 的是，fold 可以赋初值
+
+```kotlin
+runBlocking {
+        (1..3).asFlow()
+            .fold(10) {acc, i -> acc + i }.let(::println)
+    }
+
+```
+
+```
+16
+```
+
+
+
+
 
