@@ -20,8 +20,6 @@ HI，新同学，很高兴你终于看到了这篇博文，在学习之前，我
 
 首先，借助于一张图，加深大家对于 挂起，恢复的理解
 
-挂起，恢复听起来很生硬，那该怎么理解呢？
-
 ![img](https://user-gold-cdn.xitu.io/2019/6/20/16b72f0821633f92?imageslim)
 
 
@@ -617,7 +615,7 @@ class Main4Activity : AppCompatActivity() {
 }
 ```
 
-我们再Activity中声明了一个 CoroutineScope 对象，然后创建了一些作用域，这样当我们Activity destory的时候，就可以全部销毁。
+我们在Activity中声明了一个 CoroutineScope 对象，然后创建了一些作用域，这样当我们Activity destory的时候，就可以全部销毁。
 
 > 这里为了节省代码，仿 **onDestory** 的作用
 
@@ -655,4 +653,211 @@ thread-kotlinx.coroutines.DefaultExecutor,value=null
 > 请注意main函数前面加了一个 suspend,而main函数内部就相当于协程体，当我们直接调用 GlobalScope.launch 时，它直接独立运行，此时内部的 **coroutineContext** 为我们手动传递的。
 >
 > 而当我们调用了 delay之后，直接挂起协程，此时我们的main函数中的 **coroutineContext** 即为默认值null,于是get为null
+
+
+
+---
+
+
+
+## 异步流
+
+***挂起函数可以异步的返回单个值，而如何返回多个计算好的值，这正是 Flow(流)的使用之处***
+
+
+
+### 使用 list 表示多个值
+
+```kotlin
+fun foo(): List<Int> = listOf(1, 2, 3)
+ 
+fun main() {
+    foo().forEach { value -> println(value) } 
+}
+```
+
+```
+1
+2
+3
+```
+
+> **我们可以看到，相应的值是瞬间一起返回的，如果我们需要他们单个返回呢？**
+
+
+
+### 使用 Sequence 表示多个值
+
+> 使用 Sequence 可以做到同步的返回数据，但是其同时阻塞了线程
+
+```kotlin
+fun main() {
+    foo().forEach(::println)
+}
+
+fun foo():Sequence<Int> = sequence {
+    println(System.currentTimeMillis())
+    for (i in 1..3){
+        Thread.sleep(300)
+      	//yield  产生一个值，并挂起等待下一次调用
+        yield(i)
+    }
+    println(System.currentTimeMillis())
+
+}
+```
+
+```kotlin
+1578822422344
+1  //->间隔300ms
+2		//->间隔300ms
+3		//->间隔300ms
+1578822423255
+```
+
+
+
+### 挂起函数
+
+使用 suspend 标志的即为挂起函数。对于编译器来说，suspend 只是起到一个标志作用。
+
+> 在我们上面的代码中，suspend 我们经常见。
+
+
+
+### Flow
+
+使用list返回结果，意味着我们会一次返回所有值，而使用Sequence虽然可以做到同步返回，但如果有耗时操作，又会阻塞我们的线程。
+
+flow 正是解决上面存在的弊端的存在。
+
+```
+fun main() {
+    runBlocking {
+   			logThread()
+        launch {
+            logThread()
+            for (i in 1..3) {
+                println("lauch块+$i")
+                delay(100)
+            }
+        }
+        logThread()
+        foo().collect { value ->
+            println(value)
+        }
+    }
+}
+
+fun foo(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100)
+        emit(i)
+    }
+}
+
+fun logThread() = println("当前所在线程----${Thread.currentThread().name}")
+```
+
+```kotlin
+当前所在线程----main @coroutine#1
+当前所在线程----main @coroutine#1
+当前所在线程----main @coroutine#2  //lauch{} 
+lauch块+1
+1
+lauch块+2
+2
+lauch块+3
+3
+```
+
+> **flow**{} 中的代码可以挂起
+>
+> 使用 emit() 函数发射值
+>
+> 使用 collect 函数 收集 值。(可以认为是启动)
+
+
+
+### 取消Flow
+
+取消一个 Flow ,其实就是取消协程，我们无法直接取消Flow,但可以通过取消Flow 所在的协程达到目的。
+
+> 观察上面的demo，我们如果给 **foo()** 方法中打印所在线程，就会发现，它所在的线程与 runBlocking  为同一个，即 foo() 使用的是 runBlocking 上下文。
+
+我们改动代码如下：
+
+```kotlin
+fun main(){
+	...
+	withTimeoutOrNull(200){
+            foo().collect { value ->
+                println(value)
+            }
+        }
+  ...
+}
+...
+```
+
+```kotlin
+当前所在线程----main @coroutine#1
+当前所在线程----main @coroutine#2
+lauch块+1
+1
+lauch块+2
+lauch块+3
+```
+
+> 为什么 lauch依然运行呢？
+>
+> 我们在前面已经说过了，launch{}是独立运行一个协程，与父协程无关，所以此时launch{}不受取消影响
+
+
+
+### Flow构建器
+
+#### flowOf 
+
+用于定义一个发射固定值集的流
+
+```kotlin
+flowOf("123","123").collect{
+    value ->
+    println(value)
+}
+```
+
+#### asFlow
+
+用于将各种集合与序列转为Flow
+
+```kotlin
+(1..3).asFlow().collect{value-> println(value)}
+```
+
+
+
+### 过渡性流操作符
+
+使用map实现数据转换
+
+```kotlin
+runBlocking {
+        (1..3).asFlow()
+            .map {
+                delay(1000)
+                "f-$it"
+            }
+            .collect { value -> println(value) }
+    }
+```
+
+
+
+### transform
+
+简易的流转换操作符，可以用来模仿简单的转换，例如map和 filter ,或者实施更复杂一些的转换。
+
+ 
 
