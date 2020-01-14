@@ -982,7 +982,7 @@ Exception in thread "main" java.lang.IllegalStateException: Expected only one el
 
 #### reduce
 
-对流进行累加。数据累加
+对流进行累加,数据累加
 
 ```kotlin
 runBlocking {
@@ -999,7 +999,7 @@ runBlocking {
 
 #### fold
 
-对流进行累加。数据累加。不同于 reduce 的是，fold 可以赋初值
+对流进行累加,数据累加。不同于 reduce 的是，fold 可以赋初值
 
 ```kotlin
 runBlocking {
@@ -1017,3 +1017,599 @@ runBlocking {
 
 
 
+### 流是连续的
+
+在kotlin中，流是按照顺序执行的。从上游到下游的每个过渡操作符都会处理每个发射出的值然后再交给末端操作符。
+
+简单理解就是，从上到下顺序执行，只有满足上游条件才会执行下面操作符。
+
+```kotlin
+ (1..5).asFlow()
+        .filter {
+            println("filter=$it")
+            it % 2 == 0
+        }
+        .map {
+            println("map=$it")
+            "map-$it"
+        }
+        .collect {
+            println(
+                "collect-$it"
+            )
+        }
+```
+
+```kotlin
+filter=1
+filter=2
+map=2
+collect-map-2
+filter=3
+filter=4
+map=4
+collect-map-4
+filter=5
+```
+
+
+
+### Flow中的错误示例
+
+在协程中，通常使用 withContext 切换上下文 (**简单理解切换线程，不过也并不准确，因为协程的上下文包含很多数据，如value等，我们通常只是用来切换线程**) ,但是 flow{} 构建器中的代码必须遵循上下文保存属性(**即不允许更改上下文**)，并且不允许从其他上下文中发射数据 (**不允许从其他launch{}发射**)。
+
+> ***但可以通过 flowOn更改***
+
+#### 错误案例1: **更改上下文**
+
+```kotlin
+fun main() {
+    runBlocking {
+        flow {
+            withContext(Dispatchers.Default) {
+                for (i in 1..3) {
+                    delay(100)
+                    emit(i)
+                }
+            }
+
+        }.collect().let(::println)
+    }
+}
+```
+
+```kotlin
+Exception in thread "main" java.lang.IllegalStateException: Flow invariant is violated:
+		Flow was collected in [CoroutineId(1), "coroutine#1":BlockingCoroutine{Active}@1f88ae32, BlockingEventLoop@32db9536],
+		but emission happened in [CoroutineId(1), "coroutine#1":DispatchedCoroutine{Active}@77a8c47e, DefaultDispatcher].
+		Please refer to 'flow' documentation or use 'flowOn' instead
+...
+```
+
+
+
+#### 错误案例2：**从别的上下文发射数据**
+
+```kotlin
+fun main() {
+    runBlocking {
+        flow {
+            launch {
+                emit(123)
+                emit(123)
+                emit(123)
+            }
+            delay(100)
+
+        }.collect {
+
+            println(it)
+        }
+    }
+}
+```
+
+```kotlin
+Exception in thread "main" java.lang.IllegalStateException: Flow invariant is violated:
+		Emission from another coroutine is detected.
+		Child of "coroutine#2":StandaloneCoroutine{Active}@379619aa, expected child of "coroutine#1":BlockingCoroutine{Active}@cac736f.
+		FlowCollector is not thread-safe and concurrent emissions are prohibited.
+		To mitigate this restriction please use 'channelFlow' builder instead of 'flow'
+	at 
+	...
+```
+
+
+
+### flowOn
+
+用于更改流发射的上下文。
+
+```kotlin
+fun main() {
+    runBlocking {
+        logThread()
+        flow {
+            for (i in 1..3) {
+                logThread()
+                emit(i)
+                delay(10)
+            }
+        }.flowOn(Dispatchers.IO).collect {
+            println(it)
+        }
+    }
+}
+```
+
+```kotlin
+当前所在线程----main @coroutine#1
+当前所在线程----DefaultDispatcher-worker-1 @coroutine#2
+1
+当前所在线程----DefaultDispatcher-worker-1 @coroutine#2
+2
+当前所在线程----DefaultDispatcher-worker-1 @coroutine#2
+3
+```
+
+> 这里我们收集在主线程中，发射数据在IO线程。也意味着我们收集与发射此时处于两个协程之中。
+
+
+
+### Buffer
+
+流的发射与收集通常是按顺序执行，通过上面我们发现，将流 的不同部分运行在不同的协程中将对于时间有大幅度减少。但现在如果我们不使用 flowOn,此时发射一个流(emit)和收集流(collect)的耗时将累加起来。
+
+> **比如发射一个流需要100ms,收集需要200ms,则发送3个流并收集总需要至少900ms+**
+
+```kotlin
+fun main() {
+    runBlocking {
+        val start=System.currentTimeMillis()
+        flow {
+            for (i in 1..3) {
+                emit(i)
+                delay(100)
+            }
+        }.collect {
+            delay(300)
+            println(it)
+        }
+        println("花费时间-${System.currentTimeMillis()-start}ms")
+    }
+}
+```
+
+```kotlin
+1
+2
+3
+花费时间-1230ms
+```
+
+我们可以在流上使用 ***buffer*** 操作符来并发运行 数据发射及收集，而不是按顺序执行
+
+更改代码如下：
+
+```kotlin
+fun main() {
+    runBlocking {
+        val start = System.currentTimeMillis()
+        flow {
+            for (i in 1..3) {
+                logThread()
+                emit(i)
+                delay(100)
+            }
+        }.buffer().collect {
+            logThread()
+            delay(300)
+            println(it)
+        }
+        println("花费时间-${System.currentTimeMillis() - start}ms")
+    }
+}
+```
+
+```kotlin
+当前所在线程----main @coroutine#2
+当前所在线程----main @coroutine#1
+当前所在线程----main @coroutine#2
+当前所在线程----main @coroutine#2
+1
+当前所在线程----main @coroutine#1
+2
+当前所在线程----main @coroutine#1
+3
+花费时间-961ms
+```
+
+***我们发现，实则buffer也是内部切换了线程，也就是说buffer和 flowOn使用了相同的缓存机制，只不过 buffer 没有显改变上下文。***
+
+
+
+### 合并
+
+#### conflate
+
+用于跳过中间的值，只处理最新的值。
+
+```kotlin
+fun main() {
+    measureTimeMillis {
+        runBlocking {
+            (1..5).asFlow()
+                .conflate()
+                .buffer()
+                .collect {
+                    delay(100)
+                    println(it)
+                }
+        }
+    }.let{
+    println("花费时间-${it}ms")
+    }
+}
+```
+
+```kotlin
+1
+5
+花费时间-325ms
+```
+
+
+
+### 处理最新值
+
+#### collectLatest & conf
+
+取消缓慢的收集器，并在每次发射新值的时候重新启动它。
+
+```kotlin
+fun main() {
+    measureTimeMillis {
+        runBlocking {
+            (1..5).asFlow()
+                .collectLatest {
+                    println(it)
+                    delay(100)
+                    println("重新发射-$it")
+                }
+        }
+    }.let {
+        println("花费时间-${it}ms")
+    }
+}
+```
+
+```
+1
+2
+3
+4
+5
+重新发射-5
+花费时间-267ms
+```
+
+
+
+### 组合流
+
+#### zip
+
+组合两个流中的相关值
+
+```kotlin
+fun main() {
+    measureTimeMillis {
+        val strs= flowOf("one","two","three")
+        runBlocking {
+            (1..5).asFlow()
+                .zip(strs){
+                    a,b ->
+
+                    "$a -> $b"
+                }.collect { println(it) }
+        }
+    }.let {
+        println("花费时间-${it}ms")
+    }
+}
+```
+
+```
+1 -> one
+2 -> two
+3 -> three
+花费时间-120ms
+```
+
+
+
+#### Combine
+
+```kotlin
+suspend fun main() {
+    val nums = (1..3).asFlow().onEach { delay(300) } // 发射数字 1..3，间隔 300 毫秒
+    val strs = flowOf("one", "two", "three").onEach { delay(400) } // 每 400 毫秒发射一次字符串
+    val startTime = System.currentTimeMillis() // 记录开始的时间
+    nums.combine(strs) { a, b -> "$a -> $b" } // 使用“zip”组合单个字符串
+        .collect { value -> // 收集并打印
+            println("$value at ${System.currentTimeMillis() - startTime} ms from start")
+        }
+}
+```
+
+```
+1 -> one at 472 ms from start
+2 -> one at 682 ms from start
+2 -> two at 874 ms from start
+3 -> two at 987 ms from start
+3 -> three at 1280 ms from start
+```
+
+
+
+## 通道Channel
+
+- 非阻塞的通信基础设施 
+- 类似于 BlockingQueue+suspend
+
+提供了一种在 Flow 中传递数据的方法
+
+### Channel的分类
+
+| 分类       | 描述                                             |
+| ---------- | ------------------------------------------------ |
+| RENDEZVOUS | 不见不散，send调用后挂起直到receive 到达         |
+| UNLIMITED  | 无限容量，send调用后直接返回                     |
+| CONFLATED  | 保留最新，reveive只能获取最近一次的 send 的值    |
+| BUFFERED   | 默认容量，可通过该程序参数设置默认大小，默认为64 |
+| FIXED      | 固定容量，通过参数执行缓存大小                   |
+
+
+
+### Channel基础
+
+```kotlin
+suspend fun main() {
+   runBlocking {
+       val channel = Channel<Int>()
+       launch {
+           // 这里可能是消耗大量 CPU 运算的异步逻辑，我们将仅仅做 5 次整数的平方并发送
+           for (x in 1..5) channel.send(x * x)
+       }
+// 这里我们打印了 5 次被接收的整数：
+       repeat(5) { println(channel.receive()) }
+       println("Done!")
+   }
+}
+```
+
+```
+1
+4
+9
+16
+Done!
+```
+
+
+
+### channel的关闭与迭代
+
+```kotlin
+suspend fun main() {
+    runBlocking {
+        val channel = Channel<Int>()
+        launch {
+            // 这里可能是消耗大量 CPU 运算的异步逻辑，我们将仅仅做 5 次整数的平方并发送
+            for (x in 1..5) {
+                channel.send(x * x)
+            }
+            channel.close()
+            println("通道是否关闭+${channel.isClosedForSend}")
+        }
+        for (i in channel) {
+            println(i)
+        }
+        println("是否接收了所有的数据+${channel.isClosedForReceive}")
+    }
+}
+```
+
+```
+1
+4
+9
+16
+25
+```
+
+
+
+
+
+### consumeEach
+
+用以代替for循环
+
+```kotlin
+suspend fun main() {
+   runBlocking {
+       val channel = Channel<Int>()
+       launch {
+           // 这里可能是消耗大量 CPU 运算的异步逻辑，我们将仅仅做 5 次整数的平方并发送
+           for (x in 1..5) {
+               channel.send(x * x)
+           }
+           channel.close()
+       }
+       channel.consumeEach(::println)
+   }
+}
+```
+
+### 
+
+### Channel的协程Builder
+
+- Produce 启动一个生产者协程，返回ReceiveChannel
+- actor :  启动一个消费者协程，返回 SendChannel （暂时废弃）
+- 以上Builder启动的协程结束后悔自动关闭对应的 Channel
+
+#### Produce
+
+```kotlin
+suspend fun main() {
+    val receiveChannel = GlobalScope.produce(capacity = Channel.UNLIMITED) {
+        for (i in 0..3) {
+            send(i)
+        }
+    }
+
+      GlobalScope.launch {
+        receiveChannel.consumeEach(::println)
+    }.join()
+
+}
+```
+
+```
+0
+1
+2
+3
+```
+
+
+
+#### actor
+
+```kotlin
+suspend fun main() {
+    val sendChannel = GlobalScope.actor<Int>(capacity = Channel.UNLIMITED) {
+        channel.consumeEach(::println)
+    }
+
+    GlobalScope.launch {
+        for (i in 1..3){
+            sendChannel.send(i)
+        }
+    }.join()
+
+}
+```
+
+
+
+### BroadcastChannel
+
+- Channel 的元素只能被一个消费者消费
+- BroadcastChannel 的元素可以分发给所有的订阅者
+- BroadcastChannel 不支持RENDEZVOUS
+
+```kotlin
+suspend fun main() {
+    val broadcastChannel = GlobalScope.broadcast {
+        for (i in 1..3)
+            send(i)
+    }
+
+    List(3) {
+        GlobalScope.launch {
+            val receiveChannel = broadcastChannel.openSubscription()
+            println("-----$it")
+            receiveChannel.consumeEach(::println)
+
+        }
+    }.joinAll()
+}
+```
+
+```
+-----2
+-----0
+-----1
+1
+1
+1
+2
+2
+3
+3
+2
+3
+```
+
+
+
+## Select(实验性)
+
+- 是一个IO多路复用的概念
+- koltin中用于挂起函数的多路复用
+
+ Select表达式可以同时等待多个挂起函数，并选择第一个可用的
+
+
+
+#### 在Channel使用
+
+```kotlin
+suspend fun main() {
+    runBlocking {
+        val fizz = fizz()
+        val buzz = buzz()
+        repeat(7) {
+            selectFizzBuzz(fizz, buzz)
+        }
+        coroutineContext.cancelChildren()
+    }
+}
+
+suspend fun selectFizzBuzz(fizz: ReceiveChannel<String>, buzz: ReceiveChannel<String>) {
+    select<Unit> {
+        // <Unit> 意味着该 select 表达式不返回任何结果
+        fizz.onReceive { value ->
+            // 这是第一个 select 子句
+            println("fizz -> '$value'")
+        }
+        buzz.onReceive { value ->
+            // 这是第二个 select 子句
+            println("buzz -> '$value'")
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun CoroutineScope.fizz() = produce {
+    while (true) {
+        delay(300)
+        send("Fizz")
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun CoroutineScope.buzz() = produce {
+    while (true) {
+        delay(500)
+        send("Buzz")
+    }
+}
+```
+
+```
+fizz -> 'Fizz'
+buzz -> 'Buzz'
+fizz -> 'Fizz'
+fizz -> 'Fizz'
+buzz -> 'Buzz'
+fizz -> 'Fizz'
+buzz -> 'Buzz'
+```
+
+> 使用receive 挂起函数，我们可以从两个通道中接收其中一个数据，但是select允许我们使用其 onReceive 子句同时从两者接收。
+>
+> ***注意：onReceiver 在已经该关闭的通道执行会发生失败并抛出异常，我们可以使用onReceiveOrNull 子句在关闭通道时执行特定操作***
