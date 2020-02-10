@@ -8,7 +8,6 @@
 <com.google.android.material.tabs.TabLayout
     android:id="@+id/tl_add_vp"
    	//导航器长度与title同步
-    apptabIndicatorFullWidth="false"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     //导航器颜色
