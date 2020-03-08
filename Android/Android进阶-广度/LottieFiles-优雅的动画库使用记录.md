@@ -20,7 +20,7 @@
 #### 导入：
 
 ```java
-implementation 'com.airbnb.android:lottie:3.2.2
+implementation 'com.airbnb.android:lottie:3.2.2'
 ```
 
 
@@ -51,7 +51,7 @@ xml
      		//设置图片文件夹
 //        animationView.setImageAssetsFolder("");
         //设置Json文件，如果xml没指定的话
-        animationView.setAnimation("123.json");
+          animationView.setAnimation("123.json");
         //无线循环
         animationView.loop(true);
         //开启动画

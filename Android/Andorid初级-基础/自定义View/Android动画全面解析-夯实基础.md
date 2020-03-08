@@ -611,6 +611,40 @@ public class CircleView extends View {
 
 
 
+#### AnimatorSet
+
+```java
+  ObjectAnimator animator1 = ObjectAnimator.ofFloat(animationBt,"translationX",300);
+  animator1.setDuration(500);
+  ObjectAnimator animator2 = ObjectAnimator.ofFloat(animationBt,"scaleX",0.5f);
+  animator2.setDuration(500);
+  ObjectAnimator animator3 = ObjectAnimator.ofFloat(animationBt,"scaleY",0.5f);
+  animator3.setDuration(500);
+  
+  AnimatorSet set = new AnimatorSet();
+ 
+ 
+  //1.按先后顺序执行动画
+  set.setDuration(1500);
+  set.playSequentially(animator1,animator2,animator3);
+  set.start();
+ 
+ 
+  //2.一起执行动画
+  set.setDuration(500);
+  set.playTogether(animator1,animator2,animator3);
+  set.start();
+ 
+ 
+  //3.先在500ms完成第一个，在一起完成第2个和第3个
+  set.setDuration(1000);
+  set.play(animator2).with(animator3);
+  set.play(animator1).before(animator2);   
+  set.start();  
+```
+
+
+
 ## 注意事项：
 
 通过动画可以实现一些非常好看的效果，使用过程中，掌握基本的优化，无论是对我们开发还时程序的健壮性都是有很大的提高的，所以接下来，我们总结以下使用过程中应该注意的事项：
@@ -652,4 +686,5 @@ public class CircleView extends View {
 参阅：
 
 - Android开发艺术探索
+
 
