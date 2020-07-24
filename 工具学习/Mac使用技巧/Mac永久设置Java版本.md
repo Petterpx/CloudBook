@@ -18,3 +18,9 @@
 
 > **echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/' >> ~/.bash_profile source ~/.bash_profile**
 
+
+
+```cpp
+jarsigner -verbose -keystore /Users/petterp/Desktop/工作/网评相关/网评上线预留/petech.jks -signedjar /Users/petterp/Desktop/test/sing.apk /Users/petterp/Desktop/apk/yuan.apk petech
+```
+

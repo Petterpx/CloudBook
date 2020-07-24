@@ -117,7 +117,7 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
 
 用一张搬运过来的事件分发流程图来说明一下：
 
-![img](http://ww1.sinaimg.cn/large/006tNc79ly1g4w149mhs0j30u00wrmyw.jpg)
+![ 	](http://ww1.sinaimg.cn/large/006tNc79ly1g4w149mhs0j30u00wrmyw.jpg)
 
 当一个View需要处理事件时，如果它设置了 OnTouchListener, 那么 OnTouchListener 中的 onTouch 方法会被回调。这时事件如何处理还要看 onTouch 的返回值，如果返回false,则当前View 的onTouchEvent 方法会被调用；如果返回 true,那么 onTouchEvent 方法将不会被调用。由此可见，给View设置 onTouchListener，其优先级比 onTouchEvent 还要高。在 onTouchEvent 方法中，如果当前设置有 onClickListener,那么它的 onClick 方法会被调用。可以看出，平时我们常用的 onClickListener，其优先度最低，即处于事件传递的尾端.
 
@@ -1095,3 +1095,8 @@ public boolean performClick() {
 
 - [GcsSloop](https://www.gcssloop.com/customview/dispatch-touchevent-source)
 - Android开发艺术探索
+
+
+
+
+

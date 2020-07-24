@@ -99,50 +99,43 @@ Android7.0文件适配时常见场景
 
 #### 动态替换app名，图标
 
-都到这一步了，那不如更友好点，让测试同学更好辨认
+都到这一步了，那不如更友好点，让测试同学更好辨认：
 
-app,src下创建如下文件夹
+修改app.build文件
 
-![image-20200308235349364](https://tva1.sinaimg.cn/large/00831rSTly1gcmyj6gg3yj30ey0psaby.jpg)
+```
+ buildTypes {
+        release {
+           	...
+            
+            manifestPlaceholders = [icon: "@mipmap/logo",
+            												//这里也可以加入FileProvider的不同包名
+            												//例如： fileProvider: "com.petterp.release.provider"
+            												//根据自己的需求来定
+                                    name: "生产环境"]
+						...
+        }
+        debug {
+   					...
+            manifestPlaceholders = [icon: "@mipmap/logo_debug",
+            												//这里也可以加入FileProvider的不同包名
+            												//例如： fileProvider: "com.petterp.debug.provider"
+            												//根据自己的需求来定
+                                    name: "测试环境_debug"]
+            ...
+        }
+    }
 
-为了区分，我这里创建了debug,和release两个文件夹，内部分别创建了mipmap,和values文件夹，类似于main文件夹下的src。当然debug和release的名字可以自己定。
-
-***Strings.xml***
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="name">测试</string>
-</resources>
 ```
 
+这里不同的配置，区分线上和测试。当然照葫芦画瓢，我们还可以定义更多测试与生产的不同数据，这个根据自己的需求即可。
 
 
 
-
-接着打开app的build文件，修改如下 buildType的代码：
-
-```java
-release {
-	...
-    //位置在这里
-    resValue "int", "logo", "release"
-    manifestPlaceholders = [icon: "@mipmap/logo"]
-    ...
-}
-debug {
-  ....
-      
-    //位置在这里
-    resValue "string", "name", "debug"
-    manifestPlaceholders = [icon: "@mipmap/logo"]
-  ...
-}
-```
 
 然后修改AndroidManifest如下
 
-![image-20200309000103284](https://tva1.sinaimg.cn/large/00831rSTly1gcmyqp8qmfj310q0hk0wo.jpg)
+![image-20200310115211456](https://tva1.sinaimg.cn/large/00831rSTly1gcoowxtr1lj30zo0i6q7q.jpg)
 
 
 

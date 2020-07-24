@@ -292,7 +292,7 @@ animationDrawable.start();
 当然，属性动画也可以组合实现。
 
 ```java
-    private void AllAnimation() {
+	    private void AllAnimation() {
         //设置透明度 x轴，y轴透明度 从0f ->1f
         ObjectAnimator alpha = ObjectAnimator.ofFloat(imgGithub, "alpha", 0f, 0f, 1f, 1f);
         //x轴参数 缩放0f -> 1f
@@ -303,7 +303,7 @@ animationDrawable.start();
         ObjectAnimator transX = ObjectAnimator.ofFloat(imgGithub, "translationX", 300, 400);
         //y轴参数 位置，从100 -> 200
         ObjectAnimator transY = ObjectAnimator.ofFloat(imgGithub, "translationY", 100,200);
-        //旋转起始角度与终止角度
+        //旋转起始	角度与终止角度
         ObjectAnimator rotation = ObjectAnimator.ofFloat(imgGithub, "rotation", 0,360);
         AnimatorSet set=new AnimatorSet();
         //按顺序播放动画
