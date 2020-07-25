@@ -312,5 +312,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+**关于View的事件分发，之前已经做过了相关记录与源码分析，详细的情况请查看其它文章。Android事件分发基础篇-源码进阶篇**
+
 
 
