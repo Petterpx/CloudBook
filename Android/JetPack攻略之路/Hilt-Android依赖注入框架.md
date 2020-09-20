@@ -101,6 +101,12 @@ kapt 'com.google.dagger:hilt-android-compiler:2.28-alpha'
 classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
 ```
 
+**相应的model下增加**
+
+```groovy
+apply plugin: 'dagger.hilt.android.plugin'
+```
+
 ### 举个🌰：
 
 > 我们有一个 NetDataSource的 远程数据类，然后我们可能需要在Activity中调用,代码如下
@@ -509,26 +515,15 @@ classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
 **导入依赖**
 
 ```groovy
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://androidx.dev/snapshots/builds/6543454/artifacts/repository/"
-        }
-    }
-}
-```
-
-```groovy
-implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.2.0'
-implementation "androidx.activity:activity-ktx:1.1.0"
-implementation "androidx.fragment:fragment-ktx:1.2.5"
-  
-implementation 'androidx.hilt:hilt-common:1.0.0-SNAPSHOT'
-implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-SNAPSHOT'
-kapt 'androidx.hilt:hilt-compiler:1.0.0-SNAPSHOT'
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+		
+		
+		//viewModel的数据恢复，可以不导入，这里只是为了演示
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.2.0"
+		//便于 使用ViewModel-ktx扩展
+    implementation 'androidx.activity:activity:1.1.0'
+    implementation 'androidx.fragment:fragment-ktx:1.2.5'
 ```
 
 ### 举个🌰
@@ -568,6 +563,20 @@ class TestViewModel @ViewModelInject constructor(
 class TestRepository @Inject constructor() {
     fun test() {
         Log.e("petterp", "一个测试方法")
+    }
+}
+```
+
+### 补充Java中注入ViewModel
+
+```java
+public class TestViewModel extends ViewModel {
+    @ViewModelInject
+    public TestViewModel() {
+
+    }
+    public void test(){
+        Log.e("petterp","我是测试方法");
     }
 }
 ```

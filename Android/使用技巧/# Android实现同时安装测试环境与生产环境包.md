@@ -1,24 +1,21 @@
 # ***Android***实现同时安装测试环境与生产环境包
 
-众所周知，相同包名的APP，是不能同时安装的，但是我们实际开发中，测试同学往往在测试环境没问题，上了生产环境，却发现了bug,这时候就只能卸载生产环境的包，再去安装测试环境。如果没有开发流程中缺少自动化打包或者测试同学不保存蒲公英二维码，这时候就会产生多余时间成本。那么有没有一种可能，同时安装测试与生产环境的包呢？
+> 众所周知，相同包名的APP，是不能同时安装的，但是我们实际开发中，测试同学往往在测试环境没问题，上了生产环境，却发现了bug,这时候就只能卸载生产环境的包，再去安装测试环境。如果没有开发流程中缺少自动化打包或者测试同学不保存蒲公英二维码，这时候就会产生多余时间成本。那么有没有一种可能，同时安装测试与生产环境的包呢？
+>
 
 这个当然是可以的，我们更换包名就行了，Android Studio早已为我们准备了相应的操作：
 
-很简单，就一句：
+很简单，就一句，给你的app, buildTypes -debug下面增添加如下代码：
 
-给你的app, buildTypes -debug下面增添
-
-```java
+```groovy
 applicationIdSuffix ".debug"
 ```
 
-相当于在打包时，会为debug的包原包名后增加 .debug.
+**相当于在打包时，会为debug的包原包名后增加 .debug.**
 
+### 实际代码演示
 
-
-详细如下：
-
-```java
+```groovy
     buildTypes {
         release {
             minifyEnabled true
@@ -48,15 +45,17 @@ applicationIdSuffix ".debug"
 
 
 
-
+<br/>
 
 以上操作适用于大部分同学，但如果你的APP中含有 ContentProvider或者FileProvider(Android7.0文件适配必备)，也就是和包名相关的；或者你想更直接点，直接区分测试与生产的app名及图标，那么你可能需要如下操作了：
+
+### 常见问题
 
 #### APP含有ContentProvider
 
 ##### 实际场景：***华为推送***
 
-```java
+```xml
 <provider
             android:name="com.huawei.hms.update.provider.UpdateProvider"
             android:authorities="com.test.app.hms.update.provider"
@@ -66,9 +65,9 @@ applicationIdSuffix ".debug"
 
 当我们的项目中包含华为push时，往往会有如上代码，此时如果不处理包名，就会出现同时只能安装一个APP，否则adb就会提示 **com.huawei.hms.update.provider.UpdateProvider** 已存在(使用adb命令，adb install ...apk 这样会详细提示)。
 
-##### 处理方式：
+**处理方式：**
 
-```java
+```xml
        <provider
             android:name="com.huawei.hms.update.provider.UpdateProvider"
             android:authorities="${applicationId}.hms.update.provider"
@@ -80,9 +79,9 @@ applicationIdSuffix ".debug"
 
 #### APP含有FileProvider
 
-Android7.0文件适配时常见场景
+##### 实际场景：Android7.0文件适配
 
-```java
+```xml
 <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
@@ -97,13 +96,15 @@ Android7.0文件适配时常见场景
 
 
 
+### 补充进阶
+
 #### 动态替换app名，图标
 
 都到这一步了，那不如更友好点，让测试同学更好辨认：
 
 修改app.build文件
 
-```
+```groovy
  buildTypes {
         release {
            	...
@@ -149,9 +150,9 @@ Android7.0文件适配时常见场景
 
 
 
-### 叮叮当
+### 需要注意的地方
 
-***需要注意的地方***
+***叮叮当***
 
 > 如果你的APP内含有分享或者推送，那么测试版如果与线上用的是同一个appid与servert,那么测试版可能都会失败，当然这也很正常(如果不是同一个，自己处理下即可，怎么处理呢，楼下截图)。所以这点需要注意，逻辑上的功能都没什么问题。
 
@@ -159,7 +160,7 @@ Android7.0文件适配时常见场景
 
 同样是buildType下更改debug和release,分别对应的不同id,
 
-```
+```groovy
   ...
   buildConfigField "String", "BaseUrl", "\"https://www.google.com/\""
 	buildConfigField "String", "webUrl", "\"https://www.google.com/""
@@ -168,7 +169,7 @@ Android7.0文件适配时常见场景
 
 使用时如下：
 
-```java
+```kotlin
 class Test {
     fun test() {
         BuildConfig.webUrl
@@ -181,4 +182,4 @@ class Test {
 
 
 
-当然这都是很基础的一些东西，如果有帮到你的地方，不胜荣幸哈。
+***当然这都是很基础的一些东西，如果有帮到你的地方，不胜荣幸哈。我是Petterp，一个努力追寻前人脚步的应届生。***
