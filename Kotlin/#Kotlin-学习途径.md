@@ -17,15 +17,3 @@
 3. [kotlin-协程-认知三部曲-3](https://www.bilibili.com/video/av69354029)
 
 
-
-
-
-
-
-http://gitlab.rmny.tech/rmny-tech-android-com-library/rmxc-live-http.git
-
-http://47.93.207.151/rmny-tech-android-com-library/rmxc-live-http.git
-
-
-
-http://47.93.207.151/rmny-tech-android-com-library/rmxc-live-http
