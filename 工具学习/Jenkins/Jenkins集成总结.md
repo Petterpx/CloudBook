@@ -67,6 +67,12 @@
 
   
 
+#### 查看一下配置项
+
+#### 查看Git
+
+which git
+
 
 
 
@@ -148,3 +154,8 @@
 
 打包选项 ***clean assemble${BUILD_TYPE}***
 
+
+
+
+
+**https://juejin.im/entry/6844903560497332231**
