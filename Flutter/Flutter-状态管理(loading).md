@@ -64,7 +64,7 @@
 
 如何决定使用哪种管理方法，下面是官方给出的一些原则以便更准确的做出选择：
 
-- 如果状态是用户数据，如复选框的选中状态，滑块的位置，则该状态最好是由Widget管理；
+- 如果状态是用户数据，如复选框的选中状态，滑块的位置，则该状态最好是由父Widget管理；
 - 如果状态是有关界面外观效果的，例如颜色、动画，那么状态最好是由Widget本身来管理；
 - 如果某一个状态是不同 Widget 共享的则最好是由他们共同的父Widget管理。
 
@@ -78,15 +78,45 @@
 
 比如我们有如下一个示例，当我们点击屏幕时，相应的Text改变颜色和内容, 因为要做到屏幕任意位置点击都可以触发，所以我们选用 **GestureDetector** 手势管理组件。
 
-具体示例动画如下：
+具体示例如下：
 
-<img src='https://tva1.sinaimg.cn/large/0081Kckwgy1gka08rcosbg30by0mw7rf.gif' style="float: left; width: 300px; zoom: 67%;"/>
+|                             动画                             |                             代码                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| <img src='https://tva1.sinaimg.cn/large/0081Kckwgy1gka08rcosbg30by0mw7rf.gif' style="float: left; width: 280px; height: 490px;"/> | <img src='https://tva1.sinaimg.cn/large/0081Kckwly1gkcclwempxj30sk0mvdip.jpg' style="float: right; height: 490px;"/> |
+
+
+
+
 
 
 
 ### 父Widget管理子Widget状态
 
-当我们的需求场景是，通过父widget去通知子widget何时更新时，这种状态管理是比较好的方式。比如你有一个悬浮的**floatingActionButton**，通过点击其来通知内部widget改变。
+当我们的需求场景是，通过父widget去通知子widget何时更新时，这种状态管理是比较好的方式。比如通过回调的方式，在子widget中调用父widget方法，从而触发setState，更新子Widget.
+
+```
+<img src='https://tva1.sinaimg.cn/large/0081Kckwgy1gka08rcosbg30by0mw7rf.gif' style="float: left; width: 280px; height: 490px;"/>
+```
+
+```
+<img src='https://tva1.sinaimg.cn/large/0081Kckwly1gkcd8tv11tg30by0mwhbt.gif' style="float: center; width=250px; height: 400px;"/>
+```
+
+
+
+| 动画                                                         | 代码                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <img src='https://tva1.sinaimg.cn/large/0081Kckwly1gkcd8tv11tg30by0mwhbt.gif' style="float: center; width=250px; height: 400px;"/> | <img src='https://tva1.sinaimg.cn/large/0081Kckwly1gkcd22wmj2j30pa0m177k.jpg' style="float: center; width=75%; height: 500px;"/> |
+
+
+
+### 混合管理
+
+对于一些组件而言，混合管理的方式非常有用。在这种情况下，组件自身管理一些内部状态，而父组件管理一些其他外部状态。
+
+下面示例中，手指按下时，盒子周围出现一个深绿色边框，抬起时，边框消失，点击完成后，盒子的颜色改变。
+
+具体示例如下：
 
 
 
