@@ -6,7 +6,7 @@
 
 
 
-## SparseArray**
+## SparseArray
 
 SparseArray比HashMap更省内存，在某些条件下性能更好，主要是由于它避免了对key的自己主动装箱（int转为Integer类型），它内部则是通过两个数组来进行数据存储的。一个存储key，另外一个存储value，为了优化性能，它内部对数据还採取了压缩的方式来表示稀疏数组的数据，从而节约内存空间。我们从源代码中能够看到key和value各自是用数组表示：
 

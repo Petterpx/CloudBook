@@ -14,7 +14,7 @@
 
 ```xml
 def lifecycle_version = "2.1.0"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 ```
 
 
