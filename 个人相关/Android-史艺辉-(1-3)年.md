@@ -3,13 +3,13 @@
 - 史艺辉/男/1998
 - 技术博客：https://petterp.blog.csdn.net
 - Github：https://github.com/Petterpx
-- 邮箱：shiyihuicloud@163.com，手机：15129376934；
+- 邮箱：shiyihuicloud@163.com，手机：15129376934 
 
 #### 专业技能
 
 - 熟练使用Kotlin，对协程理解较不错; 热衷新技术,了解Flutter框架；
-- 熟练使用常用的JetPack组件，比如ViewModel,Paging3,Room,LiveData等;
-- 熟悉Android消息机制，自定义View,View绘制机制及事件分发机制；
+- 熟练使用常用的JetPack组件，比如ViewModel、Paging3、Room、LiveData等;
+- 熟悉Android消息机制、自定义View、View绘制机制及事件分发机制；
 - 熟悉Android应用常用的性能优化，包括内存泄漏调优，过渡绘制优化等
 - 对 app架构设计，框架搭建有一定的经验，熟悉常用设计模式；
 - 对Http,TCP/IP有较深入的理解，掌握常用的Linux,adb操作命令；
@@ -26,8 +26,8 @@
 
 - App端负责人，负责Android端开发及与前后端协调，开发进度把控；
 - 技术架构采用组件化,base层基于JetPack的二次封装，使用kotlin开发；
-- 业务功能涉及IM、直播、Hybrid、信息发布与处理、网盘等；
-- 涉及技术点：Hybrid,Flow,协程,Paging,ViewModel,LiveData,Retrofit等;
+- 业务功能涉及IM、直播、信息发布与处理、网盘等；
+- 涉及技术点：Hybrid、Flow、协程、Paging、ViewModel、LiveData、Retrofit等;
 - 后期利用 Android Profiler 进行性能优化，并配合 LeakCanary 进行内存监测，使App执行效率提高了20%；
 
 ##### 华东师范大学APP (ToC)
@@ -38,7 +38,7 @@
 - 技术架构基于JetPack组件的MVVM框架，使用Kotlin开发；
 - 业务功能涉及视频播放、资讯浏览、朋友圈、电子报、Hybrid；
 - 后期进行屏幕适配，启动动画优化，同时控制包大小；
-- 涉及技术点：Hybrid,协程,LiveData,ViewModel,ViewBing,Retrofit等;
+- 涉及技术点：Hybrid、协程、LiveData、ViewModel、ViewBing、Retrofit等;
 
 ##### 星火指挥平台APP (ToB)
 
@@ -49,7 +49,7 @@
 - 业务功能涉及IM、网盘、绩效考核、保活、通讯录等模块;
 - 搭建了Jenkins打包环境并钉钉通知，使得测试打包时间减少60%;
 - 接入了 Sonarqbe,对代码风格，坏味道进行检测，重复代码降低至6%；
-- 涉及技术点：Hybrid，RxJava,RxAndroid,协程，Retrofit等;
+- 涉及技术点：Hybrid、RxJava、RxAndroid、协程、Retrofit等;
 
 #### 教育经历
 
