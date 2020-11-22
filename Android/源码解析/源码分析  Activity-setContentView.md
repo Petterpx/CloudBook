@@ -51,7 +51,7 @@ public void setContentView(int layoutResID) {
 
 等等，`mContenParent`是什么？
 
-> mContentParent 即放置我们自己布局的容器，你可以理解为，它是我们的根布局，详情看图。
+> mContentParent 即放置我们自己布局的容器，你可以理解为，它是我们的根容器，详情看图。
 
 ---
 
@@ -118,7 +118,7 @@ protected ViewGroup generateLayout(DecorView decor) {
 
 ![image-20201121131940286](https://tva1.sinaimg.cn/large/0081Kckwly1gkwq2urevoj30mg0eogoj.jpg)
 
-哦，就一个普通的布局，没什么太奇怪的。
+哦，这就是我们DecorView中加载的布局啊，具体大图如下。
 
 <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gkwxhqrpooj30ut0n60v2.jpg" alt="image-20201121173610246" style="zoom: 67%;" />
 
@@ -129,9 +129,9 @@ protected ViewGroup generateLayout(DecorView decor) {
 我们接下来将上面的分析整体走一遍：
 
 - 当我们调用Activity的 **setContentView** 时，内部其实是执行了 `PhoneWindows`(windows的唯一实例)的 **setContenView()** ；
-- 而 `PhoneWindows` 的 **setContentView()** 内部会先判断当前有没有根布局 `contentParent`，也即就是有没有 `DecorView`，如果没有，执行 **installDecor()** 去初始化我们的 `DecorView`与`contentParent`；
-- 在 **installDecor(**) 方法里面，会先判断有没有 `DecorView`，如果没有，先new一个出来，然后判断有没有 `contentParent`，没有的话，就去根据当前主题，选择一个布局，并将其当做我们的根布局添加到 `DecorView` 中；
-- 最后 PhoneWindows-**setContentView()** 方法接下来就可以将我们自己的布局 **inflate** 进这个根布局的ViewGroup里了；
+- 而 `PhoneWindows` 的 **setContentView()** 内部会先判断当前有没有布局容器 `contentParent`，也即就是有没有 `DecorView`，如果没有，执行 **installDecor()** 去初始化我们的 `DecorView`与`contentParent`；
+- 在 **installDecor(**) 方法里面，会先判断有没有 `DecorView`，如果没有，先new一个出来，然后判断有没有 `contentParent(承载我们自己布局的ViewGroup)`，没有的话，就去根据当前主题，选择一个布局，并将其当做我们的根布局添加到 `DecorView` 中,再将其中的子view,即R.id.content这个view赋值给我们的 `contentParent`；
+- 最后 PhoneWindows-**setContentView()** 方法接下来就可以将我们自己的布局 **inflate** 进这个根布局的 `contentParent` 里了；
 
 
 
