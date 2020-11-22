@@ -512,7 +512,7 @@ public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
 
 > 和上面网络适配器的操作非常相似，所以逻辑也区别不大。都是从我们的工厂中寻找，并赋值
 
-### 
+
 
 ### 总结：loadServiceMethod
 
