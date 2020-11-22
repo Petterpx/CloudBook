@@ -29,7 +29,7 @@
 > - 我大意了
 > - 我没有闪
 > - 今天，我要自证事实
-> - 混元门代码 第三代大弟子，打工牛子 参见
+> - 混元门代码 第三代大弟子，**打工牛子** 参见
 
 
 
@@ -39,7 +39,7 @@
 
 为什么会这样，明明是一个普通的TextView,为什么变成了MaterialTextView，难不成你在逗我。
 
-<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gkwsz6uoolj31e10s5jsy.jpg" alt="img" style="zoom:33%;" />
+![马保国语录全文马保国语录原版分享-758手游网](https://tva1.sinaimg.cn/large/0081Kckwly1gkxt77vrk8j306h060748.jpg)
 
 
 
@@ -51,7 +51,7 @@
 
 
 
-先进入AppCompatActivity 的 setContenView():
+先进入 `AppCompatActivity` 的 **setContenView()**:
 
 ```java
 public void setContentView(@LayoutRes int layoutResID) {
@@ -59,7 +59,7 @@ public void setContentView(@LayoutRes int layoutResID) {
 }
 ```
 
-索然无味，进入 AppCompatDelegateImpl-setContentView()
+索然无味，进入 `AppCompatDelegateImpl`-**setContentView()**
 
 ```java
 @Override
@@ -73,13 +73,13 @@ public void setContentView(int resId) {
 }
 ```
 
-这里就很直接嘛，看过Activity-setContentView的同学都知道 contentParent 是啥，我们的根布局嘛，这里后面的 inflate就不用说了，主要在于 ensureSubDecor()，看看它里面做了甚。
+这里就很直接嘛，看过 `Activity-setContentView` 的同学都知道 `contentParent` 是啥，我们的根布局嘛，这里后面的 **inflate** 就不用说了，主要在于 **ensureSubDecor()**，看看它里面做了甚。
 
 ---
 
 
 
-进入 ensureSubDecor()
+进入 **ensureSubDecor()**
 
 ```java
 private void ensureSubDecor() {
@@ -90,9 +90,9 @@ private void ensureSubDecor() {
 }
 ```
 
-mSubDecorInstalled 见名之意，windows是否已经安装了DecorView,如果已经安装，就忽略。
+`mSubDecorInstalled` 见名之意，`windows` 是否已经安装了 `DecorView`,如果已经安装，就忽略。
 
-我为什么会知道呢？翻译啊。
+我为什么会知道呢？翻译啊,ohhhh。
 
 ```java
 // true if we have installed a window sub-decor layout.
@@ -103,7 +103,7 @@ private boolean mSubDecorInstalled;
 
 ---
 
-进入createSubDecor()
+进入 **createSubDecor()**
 
 ```java
     private ViewGroup createSubDecor() {
@@ -144,11 +144,11 @@ private boolean mSubDecorInstalled;
 
 ```
 
-这个方法相对较复杂，理解了其，这篇也就可以结束了。哦呵呵呵....
+这个方法相对较复杂，理解了其，这篇也就可以结束了。
 
-1. TypedArray，是不是有种似曾相识的感觉，没问题，这里和Activity-setContentView源码里的一样，也都是判断主题，从而决定一些配置及最终的根布局文件
+1. `TypedArray`，是不是有种似曾相识的感觉，没错，这里和 **Activity-setContentView** 源码里的一样，也都是判断主题，从而决定一些配置及最终的根布局文件;
 
-2. 初始化AppCompatDategateImpl的 mWinodws
+2. 初始化 **AppCompatDategateImpl** 的 `mWinodws`;
 
    ```java
    private void ensureWindow() {
@@ -158,7 +158,7 @@ private boolean mSubDecorInstalled;
    }
    ```
 
-3. getDecorView，其内部即PhoneWindows.getDecorView()方法
+3. **getDecorView()**，其内部即 **PhoneWindows.getDecorView()** 方法
 
    ```java
    @Override
@@ -170,51 +170,15 @@ private boolean mSubDecorInstalled;
    }
    ```
 
-   installDecor() 方法上个博文提过了，就是用它确保我们的DecorView与 mContentParent已经安装成功。
+   **installDecor()** 方法上个博文提过了，就是用它确保我们的 `DecorView` 与 `mContentParent` 已经初始化。
 
-4. 这里获取了一个 R.layout.abc_screen_simple 的布局，我们可以理解为，这是AppCompatActivity 特定的根布局。
+4. 这里获取了一个 ***R.layout.abc_screen_simple*** 的布局，我们可以理解为，这是 **AppCompatActivity** 特定的根布局。
 
-   ```xml
-   <androidx.appcompat.widget.FitWindowsLinearLayout
-       xmlns:android="http://schemas.android.com/apk/res/android"
-       android:id="@+id/action_bar_root"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:orientation="vertical"
-       android:fitsSystemWindows="true">
-   
-       <androidx.appcompat.widget.ViewStubCompat
-           android:id="@+id/action_mode_bar_stub"
-           android:inflatedId="@+id/action_mode_bar"
-           android:layout="@layout/abc_action_mode_bar"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content" />
-   
-       <include layout="@layout/abc_screen_content_include" />
-   
-   </androidx.appcompat.widget.FitWindowsLinearLayout>
-   ```
+5. 这里获取了 **ContentFrameLayout** 与DecorView的 `content` ，获取的意义是什么呢？到了下一步就知道；
 
-   **abc_screen_content_include**
+6. 遍历 **windowsContent**，将其中的所有 **view** 添加到 `contentView` 中，并移除windowsContent中相应的view.最后，再设置 contentView 其`id`为R.id.content(原本为***action_bar_activity_content***)，将**windowsContent** `id` 置 **null**.
 
-   ```xml
-   <merge xmlns:android="http://schemas.android.com/apk/res/android">
-   
-       <androidx.appcompat.widget.ContentFrameLayout
-               android:id="@id/action_bar_activity_content"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:foregroundGravity="fill_horizontal|top"
-               android:foreground="?android:attr/windowContentOverlay" />
-   
-   </merge>
-   ```
-
-5. 这里获取了ContentFrameLayout与DecorView的content，获取的意义是什么呢？到了下一步就知道；
-
-6. 遍历 windowsContent，将其中的所有view 添加到 contentView 中，并移除windowsContent中相应的view.最后，再设置contentView 其id为R.id.content(原本为action_bar_activity_content)，将windowsContent Id置null.
-
-7. 最后将新的 contentView 设置到windows,即也就是将contentView add到我们的根布局contenParent里，内部是如下方法。
+7. 最后将新的 `contentView` 设置到 `windows`,即也就是将 `contentView` **add**到我们的根容器 `contenParent` 里，内部是如下方法。
 
    ```java
    @Override
@@ -226,23 +190,52 @@ private boolean mSubDecorInstalled;
    }
    ```
 
-   先清空根布局，再add 刚才传入的布局，因为我们在第 6 步更改过id,所以相当于
+   先清空根布局，再add 刚才传入的布局，因为我们在第 6 步更改过id,所以相当于这个新的容器即为我们新的 `根ViewGroup`.
 
-问题来了，为什么源码里要将PhoneWindows-windowsContent里的所有view复制到新的 contentView里？
+### 阶段小思考
 
-> 因为，Activity默认的DecorView加载的是R.layout.screen_simple,而我们的根布局是其中的一个子FrameLayout,当使用 AppCompatActivity时，为了兼容性，其有自己相应的主题layout,所以在设置时，先将当前根View 里的所有子view放到新的这个容器里，再将这个容器的id设置为R.id.content，即让其成为新的根容器，再将这个容器add到我们的 DecorView 里的根布局(即FraeLayout)上,这样就达到了在不影响原有view显示情况下的兼容效果。
+问题来了，为什么源码里要将 **PhoneWindows**-`windowsContent` 里的所有view复制到新的 `contentView` 里？
 
-如下图所示：
+> 因为，Activity 默认的 `DecorView` 加载的是***R.layout.screen_simple***,而我们的根布局是其中的一个`子FrameLayout`,当使用 **AppCompatActivity** 时，为了兼容性，其有自己相应的主题layout,所以在设置时，先将当前根容器里的所有子view放到新的这个容器里，再将这个容器的id设置为**R.id.content**，即让其成为新的根容器，再将这个容器add到我们的 `DecorView` 里的根布局(即FrameLayout)上,这样就达到了在不影响原有view显示情况下的兼容效果。
 
-![image-20201121174012239](https://tva1.sinaimg.cn/large/0081Kckwly1gkwxlxk87yj311p0kj0vi.jpg)
+这样说你明白了吗？
 
-检查层级我们就会发现，原来AppCompatActivity 是在原 Activity 布局层级上嵌套的，正如上面所描述。
+![微信朋友圈能评论表情包了，来斗图啊！_手机新浪网](https://tva1.sinaimg.cn/large/0081Kckwly1gkxsz9qtk6j306o06owei.jpg)
+
+还不明白？好吧，我再从 `背景` 说一遍
+
+> 正如上面所述，**AppCompatActivity** 有自己特定的容器 layout,如果在设计时，让它直接替代了Activity的默认根容器，就意味着 **AppCompatActivity** 必须独立的去写一份，这合适吗，显然不适合。所以正因为如此，**AppCompatActivity** 里的 **DecorView** 变量名叫做 `mSubDecor`,而我们基础 **PhoneWindows** 里的叫做 `mDecor`，再想想为什么**AppCompatActivity** 里会单独再定义一个 所谓的 **DecorView**，意义何在，再配合**AppCompatDelegateImpl-createSubDecor()**方法里上述的操作，现在你懂了吗？
+
+具体如下图所示：
+
+![image-20201122111751708](https://tva1.sinaimg.cn/large/0081Kckwly1gkxse09m7tj30zc0me769.jpg)
+
+检查层级我们就会发现，原来AppCompatActivity 是在原 Activity 布局层级上嵌套的，正如上面所描述，是不是有种ohhhh，就这啊的感觉。
+
+![你品你细品表情包_抖音你品你细品高清表情包下载_游戏吧](https://tva1.sinaimg.cn/large/0081Kckwly1gkxsj9u4itj307r051a9y.jpg)
+
+### 串一下思路
+
+1. 当我们在 `AppCompatActivity` 里调用 **setContentView()** 时，其内部调用的是`AppCompatDelegateImpl`的 **setContentView()**,最终调用了**ensureSubDecor()**,即用来确保DecorView是否已经初始化成功。
+2. 在 **ensureSubDecor()** 方法里，先判断 `子DecorView`(为什么是`子`,因为它不可能直接替代根DecorView,AppCompatActivity只是做了一个兼容，即在`DecorView`之上再添加一个副级，从而做到**对调用者屏蔽，对于使用者而言，其实毫无察觉**) 有没有安装，如果没有，则调用 **createSubDecor()**去初始化它;
+3. **createSubDecor()** 内部会根据当前主题进行相关配置，最终设置当前的根容器，并将当前 `Windows-DecorView` 根容器-FrameLayout里的所有子view全部add到新的容器里，再将新容器的id改为 ***R.id.content***,然后**windows.setContentView()**，内部即 ***add*** 到旧容器 `FrameLayou`上，成为唯一子容器。而这个新的容器就是最新的根容器。
+4. 随后的方法很简单，我们自己的布局直接 ***add*** 到根容器 ViewGroup上即可。
 
 
 
-问题又来了，最开始的TextView增加后缀的原因是啥？
 
-我们回到最开始的AppCompatActivity-Create()
+
+
+
+### 为什么打印不一致
+
+等等，最开始的 `View  `打印增加前缀的原因是啥，这和 **setContentView()** 有何关系？
+
+![搞笑端碗等饭表情包大全抖音端碗等饭表情包_抖音_图文教程_多特软件站](https://tva1.sinaimg.cn/large/0081Kckwly1gkxskg5psfj307705fmx0.jpg)
+
+> 是啊，好像没什么关系，那你在这说xxx,不好意思，我们切换下一个话题。
+
+我们回到最开始的 ***AppCompatActivity-Create()***
 
 ```java
 @Override
@@ -255,7 +248,7 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 }
 ```
 
-没有什么说的，我们直接进入 installViewFactory()
+没有什么说的，我们直接进入 **installViewFactory()**
 
 ```java
 @Override
@@ -269,11 +262,11 @@ public void installViewFactory() {
 }
 ```
 
-如果我们没有设置LayoutInflater工厂，则会设置默认的工厂，然后最终创建布局时会调用 onCreateView 方法。
+如果我们没有设置 `LayoutInflater` 工厂，则会设置默认的工厂，然后最终创建布局时会调用 **onCreateView()** 方法。
 
+---
 
-
-我们进入相应的onCreateView
+我们进入相应的 ***onCreateView()***
 
 ```java
 @Override
@@ -284,6 +277,8 @@ public View createView(View parent, final String name, @NonNull Context context,
     );
 }
 ```
+
+没什么好说的，进入 ***mAppCompatViewInflater.createView()***
 
 ```java
 final View createView(View parent, final String name, @NonNull Context context,
@@ -298,5 +293,15 @@ final View createView(View parent, final String name, @NonNull Context context,
         ...
 ```
 
-相应的，createView 里面对我们的默认的View进行了替换，这也就是为什么我们使用AppCompatActivity 打印出来的子View自带了前缀显示。
+哦呵呵呵，原来这里是对我们的默认的 `View` 进行了替换，这也就是为什么我们使用`AppCompatActivity` 打印出来的子 `View` 自带了前缀显示。
+
+
+
+
+
+
+
+
+
+
 
