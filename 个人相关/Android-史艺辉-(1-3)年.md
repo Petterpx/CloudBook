@@ -1,20 +1,22 @@
 #### 个人信息
 
 - 史艺辉/男/1998
-- 技术博客：https://petterp.blog.csdn.net
-- Github：https://github.com/Petterpx
+- github：https://github.com/Petterpx
+- 技术博客：https://petterp.blog.csdn.net 
 - 邮箱：shiyihuicloud@163.com，手机：15129376934 
 
 #### 专业技能
 
-- 熟练使用Kotlin，对协程理解较不错; 热衷新技术,了解Flutter框架；
-- 熟练使用常用的JetPack组件，比如ViewModel、Paging3、Room、LiveData等;
-- 熟悉Android消息机制、自定义View、View绘制机制及事件分发机制；
-- 熟悉Android应用常用的性能优化，包括内存泄漏调优，过渡绘制优化等
-- 对 app架构设计，框架搭建有一定的经验，熟悉常用设计模式；
-- 对Http,TCP/IP有较深入的理解，掌握常用的Linux,adb操作命令；
-- 理解Android design规范，对ue有自己的感知；
-- 热衷记录与分享，csdn博客专家,Github Star 60+,个人笔记50w字左右；
+- 熟练使用Kotlin，对协程理解较不错; 热衷新技术,了解Flutter框架;
+- 熟练使用JetPack组件，比如ViewModel、Paging3、Room、LiveData等;
+- 熟悉App架构设计，擅长模块化与组件化，并能根据实际业务做出调整;
+- 熟悉常用的第三方库，如Retrofit、EventBus、Glide等;
+- 熟悉Android消息机制、自定义View、View绘制机制及事件分发机制;
+- 熟悉Android应用常用的性能优化，包括内存泄漏调优，过渡绘制优化等;
+- 熟悉常见的移动端框架，如MVC、MVP、MVVM; 了解常用的设计模式;
+- 熟悉 Http,TCP/IP，对加密过程有较深入的理解; 掌握常用的adb操作命令;
+- 理解Android design规范，对ue有自己的感知;
+- 热衷记录与分享，csdn博客专家,Github Star 60+,个人笔记50w字左右;
 
 #### 工作经历
 
@@ -36,7 +38,7 @@
 
 - 负责Android端框架搭建，技术选型，独立开发及后续迭代；
 - 技术架构基于JetPack组件的MVVM框架，使用Kotlin开发；
-- 业务功能涉及视频播放、资讯浏览、朋友圈、电子报、Hybrid；
+- 业务功能涉及视频播放、资讯浏览、朋友圈、电子报；
 - 后期进行屏幕适配，启动动画优化，同时控制包大小；
 - 涉及技术点：Hybrid、协程、LiveData、ViewModel、ViewBing、Retrofit等;
 

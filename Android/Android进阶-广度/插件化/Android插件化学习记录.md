@@ -225,3 +225,5 @@ public class CustomClassLoader extends DexClassLoader {
 - 管理宿主apk所有的插件 apk 信息
 - 为每个插件 apk创建对应的类加载器，资源管理器
 
+
+
