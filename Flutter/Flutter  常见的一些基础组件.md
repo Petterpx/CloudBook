@@ -34,3 +34,42 @@ TextStytle 用于指定文本显示的样式如颜色，字体，粗细，背景
 
 ![image-20201206232549264](https://tva1.sinaimg.cn/large/0081Kckwly1glejw6dq0fj315a0ik416.jpg)
 
+
+
+### DefaultTextStyle
+
+在Widget 树中，文本的样式默认是可以被继承的(子类文本类组件未指定具体样式时可以使用Widget树中父级设置的默认样式)，因此，如果我们在 Widget 树的某一个节点处设置一个默认的文本样式，那么该节点的子树中所有文本都会默认使用这个样式，而 **DefultTextStyle** 正是用于设置默认文本样式：
+
+|                             图示                             |                             代码                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![image-20201207222258287](https://tva1.sinaimg.cn/large/0081Kckwly1glfnp4f73yj305b05a74b.jpg) | ![image-20201207222324182](https://tva1.sinaimg.cn/large/0081Kckwly1glfnpj199qj30j80ffwga.jpg) |
+
+
+
+### 字体
+
+对于更换我们显示的字体，常见的客户端开发同学都不会陌生，而Flutter也不用自然也支持这个功能。
+
+在Flutter中使用字体一般分为两步。
+
+1. 在 pubspec.yaml 中声明；
+2. 通过 TextStyle 属性使用；
+
+#### 在 asset 中声明
+
+要将字体打包到我们应用中，和使用其他资源一样，要先在 pubspec.yaml 中声明，然后将我们字体复制到 pubspec.yaml 中指定的位置。示例如下：
+
+**配置过程**
+
+![image-20201207234225918](https://tva1.sinaimg.cn/large/0081Kckwly1glfpzrpmyyj30x40a976s.jpg)
+
+[Google-Font:字体下载网站](https://fonts.google.com/)
+
+**示例如下：**
+
+![image-20201207233245423](https://tva1.sinaimg.cn/large/0081Kckwly1glfpposrrej30qg07dtbf.jpg)
+
+> **注意：**如果使用后发现没有效果，确认代码没问题情况下，记得先卸载app,再运行即可看到效果。😂
+
+
+
