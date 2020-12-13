@@ -6,7 +6,7 @@
 
 本篇是带大家了解并明白Flutter中`状态管理`相关，着眼与实际应用与通俗(说人话)解释，杜绝概念连篇❎。
 
-对应示例代码地址：[Flutter-example-状态管理]()
+对应示例代码地址：[Flutter-example-状态管理](https://github.com/Petterpx/Flutter-Example-Demo/blob/master/lib/example/status_manager.dart)
 
 
 
