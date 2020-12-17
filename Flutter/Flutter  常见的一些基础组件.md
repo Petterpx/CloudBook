@@ -215,3 +215,160 @@ class AliIcons {
 
 
 
+## 单选框和复选框todo
+
+
+
+## 输入框和表单
+
+## TextField
+
+```dart
+TextField(
+  //自动获取焦点
+  autofocus: true,
+  //设置输入框默认键盘类型
+  keyboardType: TextInputType.number,
+  // TODO: 2020/12/17 方式1：通过onChanged自己记录
+  onChanged: (value) {
+    print("通过onChanged监听--$value");
+  },
+
+  decoration: InputDecoration(
+      labelText: "输入名字",
+      hintText: "我是一个提示",
+      prefixIcon: Icon(Icons.verified_user)),
+)
+```
+
+### 常用参数
+
+- Controller :
+
+  输入框的控制器，通过其可以设置获取编辑框的内容，选择编辑内容，监听编辑文本改变事件。一般情况下都需要显示提供一个 **controller** 来于文本进行交互。如果用户没有自己提供，则 TextField 内部则会自己创建一个。
+
+- focusNode :
+
+  用于控制 TextField 是否占有当前键盘的输入焦点，是我们用户与键盘交互的一个句柄 (handle)
+
+- IntPutDecoration:
+
+  控制TextField 的外观显示，比如文本，背景颜色，边框等
+
+- keyboardType: 
+
+  设置该输入框默认的键盘输入类型，相应的范围如下：
+
+| TextInputType枚举值 | 解释                                                   |
+| ------------------- | ------------------------------------------------------ |
+| text                | 文本输入框                                             |
+| muitline            | 多行文本，需要和 maxLines配合去使用，(设为null或大于1) |
+| number              | 数字，设置后会弹出数字键盘                             |
+| phone               | 优化后的电话号码输入键盘；会弹出数字键盘并显示 “ # ”   |
+| datetime            | 优化后的日期输入键盘，Android上会显示":-"              |
+| emailAddress        | 优化后的电子邮件地址；会显示”@“                        |
+| Url                 | 优化后的url输入键盘；会显示"/."                        |
+
+- **textInputAction**：键盘动作按钮图标，即我们常见的回车图标。
+- **style**：正在编辑的文本样式
+- `textAlign`: 输入框内编辑文本在水平方向的对齐方式。
+- `autofocus`: 是否自动获取焦点。
+- `obscureText`：是否隐藏正在编辑的文本，如用于输入密码的场景等，文本内容会用“•”替换。
+- `maxLines`：输入框的最大行数，默认为1；如果为`null`，则无行数限制。
+- `maxLength`和`maxLengthEnforced` ：`maxLength`代表输入框文本的最大长度，设置后输入框右下角会显示输入的文本计数。`maxLengthEnforced`决定当输入文本长度超过`maxLength`时是否阻止输入，为`true`时会阻止输入，为`false`时不会阻止输入但输入框会变红。
+- `onChange`：输入框内容改变时的回调函数；注：内容改变事件也可以通过`controller`来监听。
+- `onEditingComplete`和`onSubmitted`：这两个回调都是在输入框输入完成时触发，比如按了键盘的完成键（对号图标）或搜索键（🔍图标）。不同的是两个回调签名不同，`onSubmitted`回调是`ValueChanged<String>`类型，它接收当前输入内容做为参数，而`onEditingComplete`不接收参数。
+- `inputFormatters`：用于指定输入格式；当用户输入内容改变时，会根据指定的格式来校验。
+- `enable`：如果为`false`，则输入框会被禁用，禁用状态不接收输入和事件，同时显示禁用态样式（在其`decoration`中定义）。
+- `cursorWidth`、`cursorRadius`和`cursorColor`：这三个属性是用于自定义输入框光标宽度、圆角和颜色的。
+
+### 焦点控制
+
+对于TextField 的焦点，我们可以通过 FocusNode 和 FocusScopeNode 来控制，默认情况下，焦点由 FocusScope 来管理，其代表焦点控制范围，在这个范围内，我们可以用个 FocusScopeNode 在输入框之间移动焦点，设置默认焦点等。
+
+如下示例：
+
+```dart
+FocusNode focusNode1 = FocusNode();
+FocusNode focusNode2 = FocusNode(); 
+FocusScopeNode? _focusScopeNode;
+
+TextField(
+            focusNode: focusNode1,
+            //用于控制TextField外观显示，如文本，背景色，边框等
+            decoration: InputDecoration(
+                labelText: "输入名字",
+                hintText: "我是一个提示",
+                prefixIcon: Icon(Icons.verified_user)),
+          ),
+          TextField(
+            focusNode: focusNode2,
+            decoration: InputDecoration(
+                labelText: "我是测试2",
+                hintText: "我是第二个测试",
+                prefixIcon: Icon(Icons.access_time)),
+          ),
+          RaisedButton(
+            // TODO: 2020/12/17 移动焦点
+            onPressed: mobileFocus,
+            child: Text("移动焦点"),
+          )
+            
+            
+ /// 移动焦点 */
+  mobileFocus() {
+    //方式1
+    FocusScope.of(context).requestFocus(focusNode2);
+
+    // 方式2
+    // if (_focusScopeNode == null) {
+    //   _focusScopeNode = FocusScope.of(context);
+    // }
+    // _focusScopeNode?.requestFocus(focusNode2);
+  }
+```
+
+
+
+### 监听焦点状态改变事件
+
+通过 FocusNode 可以监听焦点的改变事件，如下：
+
+```dart
+...
+// 创建 focusNode   
+FocusNode focusNode = new FocusNode();
+...
+// focusNode绑定输入框   
+TextField(focusNode: focusNode);
+...
+// 监听焦点变化    
+focusNode.addListener((){
+  //获得焦点时为true，否则为false
+   print(focusNode.hasFocus);
+});
+```
+
+### 自定义样式
+
+```dart
+ decoration: InputDecoration(
+      labelText: "输入名字",
+      hintText: "我是一个提示",
+      //未获得焦点时,设置下划线为灰色
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 5)),
+      //获得焦点时,设置下划线为红色
+      focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 5)),
+      prefixIcon: Icon(Icons.verified_user)),
+)
+```
+
+上述的方式是通过 设置inputDecoration 的有无焦点状态下的下划线颜色，另外，我们还可以通过 **主题** 来定义输入框的样式。
+
+TextField 默认的颜色使用的是我们默认的主题色，所以自然的，我们可以通过更改主题色来定义相应的全局颜色，或者说通过更改主题色来更改 TextField 的默认颜色。
+
+如下示例：
+
+![image-20201217235144214](https://tva1.sinaimg.cn/large/0081Kckwly1glragise8ej30nz0eadi5.jpg)
