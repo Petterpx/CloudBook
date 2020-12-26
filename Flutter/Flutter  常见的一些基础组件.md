@@ -372,3 +372,29 @@ TextField 默认的颜色使用的是我们默认的主题色，所以自然的�
 如下示例：
 
 ![image-20201217235144214](https://tva1.sinaimg.cn/large/0081Kckwly1glragise8ej30nz0eadi5.jpg)
+
+
+
+需要注意的是，我们通过主题定义的统一的下划线颜色和文字样式，当输入框在获取焦点时， **labelText** 不会高亮显示，而且还无法定义下划线宽度，另一种方式是直接隐藏掉 TextField 本身下划线，然后通过 Container 去嵌套。如下所示。
+
+```dart
+Container(
+  child: TextField(
+    decoration: InputDecoration(
+        labelText: "测试3",
+        hintText: "我是要隐藏下划线的TextField",
+        border: InputBorder.none),
+  ),
+  decoration: BoxDecoration(
+      border:
+          Border(bottom: BorderSide(color: Colors.grey, width: 1))),
+),
+```
+
+
+
+## 表单
+
+在实际开发中，我们都会面对这对输入框数据进行合法性的校验，但是如果对每一个 **TextField** 都分别进行校验将非常麻烦。而且如果用户想清除一组 **TextField** 内容，一个一个清除就会非常痛苦，为此，Flutter 提供了 **From** 组件，它可以对输入框进行分组，然后进行一些统一操作，如 输入内容校验，输入框重置以及输入内容保存。
+
+·
