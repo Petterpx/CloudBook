@@ -76,3 +76,36 @@ class DecoratedBoxWidget extends StatelessWidget {
 
 
 
+### Transform(变换)
+
+用于在子组件绘制时对其应用一些矩阵变换来实现一些特效， 其中 **Matrix4** 是一个4d矩阵库，通过其我们可以实现各种操作。
+
+如下所示：
+
+|                             代码                             |                             图示                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![image-20210120204839283](../../../../Library/Application Support/typora-user-images/image-20210120204839283.png) | ![image-20210120204901328](https://tva1.sinaimg.cn/large/008eGmZEgy1gmug8w7ltxj30ia0bgt9n.jpg) |
+| ![image-20210120212934265](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuhf5rmp2j30ws0hitdt.jpg) | ![image-20210120211956158](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuh522jbtj30ga08oaaf.jpg) |
+| ![image-20210120212024620](../../../../Library/Application Support/typora-user-images/image-20210120212024620.png) | ![image-20210120212035114](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuh5qi89kj30es07iq38.jpg) |
+| ![image-20210120212155092](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuh75mu7aj30xg0pmq97.jpg) | ![image-20210120212118804](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuh6i7jzxj30eg09kjrq.jpg) |
+
+> 由于矩阵的变化只会作用在绘制阶段，所以某些场景下，在UI需要变化时，可以直接通过矩阵变化来达到视觉上的UI改变，而无需去重写触发 build。
+
+#### 问题：
+
+**使用 Transform 对其子组件先进行平移在旋转与先旋转再平移，两者的最终效果会一样吗？**
+
+![image-20210120235543880](https://tva1.sinaimg.cn/large/008eGmZEgy1gmuln8he44j316g0j240x.jpg)
+
+由上图可发现,当旋转后，相对应的x,y方向已经改变，所以先平移再旋转与先旋转后平移，对于矩阵的改变而言，其是不同的效果
+
+
+
+#### RotatedBox
+
+RotatedBox 与 Transform.rotate 功能相似，但不同的支出在于， **RotatedBox** 的变换是在layout阶段，会影响子widget的位置和大小。如下图所示：
+
+
+
+
+
