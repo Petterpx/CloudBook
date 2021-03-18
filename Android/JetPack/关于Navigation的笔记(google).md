@@ -387,10 +387,3 @@ fun navigateToProductDetails(productId: String) {
 ### 视频
 
 - [Android Jetpack：使用导航控制器管理界面导航（2018 年 Google I/O 大会）](https://www.youtube.com/watch?v=8GCXtCjtg40)
-
-
-
-
-
-
-
