@@ -9,6 +9,10 @@
 #### 从app bundle生成一组apk
 
 > 如果是mac 需要将 bundletools 改为 java -jar bundletool.jar
+>
+> 或者 使用 brew 安装，之后就可以直接使用 bundletools 命令
+>
+> **brew install bundletool**
 
 ```sh
 bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
