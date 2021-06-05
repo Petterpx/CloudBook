@@ -4,8 +4,6 @@ Android事件分发全面解析-夯实基础
 
 本文不过多涉及基础性问题，建议有点了解再来阅读，或者直接硬干。
 
-![img](E:\Android_NoteBook\Android_NoteBook\assets\u=746617288,3582388677&fm=26&gp=0.jpg)
-
 
 
 ---
@@ -29,7 +27,7 @@ Android事件分发全面解析-夯实基础
 
 事件列：从手指接触屏幕至手指离开屏幕，这个过程产生一系列时间，任何时间都是以Down事件开始，UP事件结束，中间会有无数Move事件。
 
-![img](http://ww1.sinaimg.cn/large/006tNc79ly1g4w148aoxnj30ri050dg1.jpg)
+![img](https://tva1.sinaimg.cn/large/008i3skNly1gr4b7114tpj30ri050jrk.jpg)
 
 也就是说，当一个 **MotionEvent** 产生后，系统需要把这个事件传递给一个具体View去处理。
 
@@ -47,7 +45,7 @@ Android事件分发全面解析-夯实基础
 
 ## 三大方法： - >(入门)
 
-![img](http://ww1.sinaimg.cn/large/006tNc79ly1g4w1497oroj30dw0dw3yy.jpg)
+![img](https://tva1.sinaimg.cn/large/008i3skNly1gr4b71xrwkj30dw0dw3yy.jpg)
 
 ### 说到分发过程，就不得不说这三个方法了：
 
@@ -117,7 +115,7 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
 
 用一张搬运过来的事件分发流程图来说明一下：
 
-![ 	](http://ww1.sinaimg.cn/large/006tNc79ly1g4w149mhs0j30u00wrmyw.jpg)
+![ 	](https://tva1.sinaimg.cn/large/008i3skNly1gr4b749h9hj30u00wr76b.jpg)
 
 当一个View需要处理事件时，如果它设置了 OnTouchListener, 那么 OnTouchListener 中的 onTouch 方法会被回调。这时事件如何处理还要看 onTouch 的返回值，如果返回false,则当前View 的onTouchEvent 方法会被调用；如果返回 true,那么 onTouchEvent 方法将不会被调用。由此可见，给View设置 onTouchListener，其优先级比 onTouchEvent 还要高。在 onTouchEvent 方法中，如果当前设置有 onClickListener,那么它的 onClick 方法会被调用。可以看出，平时我们常用的 onClickListener，其优先度最低，即处于事件传递的尾端.
 
@@ -160,13 +158,13 @@ public boolean dispatchTouchEvent(MotionEvent event) {
 
 ## 实例： ->（**实践**）
 
-![img](http://ww1.sinaimg.cn/large/006tNc79ly1g4w14a4jvvj30az063mx2.jpg)
+![img](https://tva1.sinaimg.cn/large/008i3skNly1gr4b782g8ij30az063t8l.jpg)
 
 **结合上面的结论，我们来用实例来演示一下**
 
 首先用这样一个图来看
 
-![1562035617491](http://ww2.sinaimg.cn/large/006tNc79ly1g4w14ajp3wj30ng0fvdfv.jpg)
+![1562035617491](https://tva1.sinaimg.cn/large/008i3skNly1gr4b79xrbwj30ng0fvjs1.jpg)
 
 这是一个简单的布局，Activity里面一个LinearLayout,用来代替ViewGroup，内部是一个Button,没什么说的。
 
@@ -337,7 +335,7 @@ public class ViewActivity extends AppCompatActivity {
 </com.petterp.studybook.View.LinearLayoutView>
 ```
 
-![1562036451198](http://ww4.sinaimg.cn/large/006tNc79ly1g4w14b52gtj30aj0hwaa2.jpg)
+![1562036451198](https://tva1.sinaimg.cn/large/008i3skNly1gr4b7e401mj60aj0hw74b02.jpg)
 
 首先看看默认情况下的事件分发过程：
 
@@ -498,7 +496,7 @@ Activity:
 
 有了上面的概念及Demo的亲自体验，那么接下来我们从源码出发，知根知底，看一下究竟。
 
-![img](http://ww3.sinaimg.cn/large/006tNc79ly1g4w14g6dmkg308c06baae.gif)
+![img](https://tva1.sinaimg.cn/large/008i3skNly1gr4b7hveykg308c06baae.gif)
 
 Android中事件分发顺序：**Activity（Window） -> ViewGroup -> View**
 
