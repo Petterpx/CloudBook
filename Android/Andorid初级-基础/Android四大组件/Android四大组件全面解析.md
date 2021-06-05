@@ -1,9 +1,4 @@
 # Android四大组件
-Poor is the foundation
-穷是基础。
-
-<br/>
-
 ## Activity
 
 ### 生命周期
@@ -16,7 +11,6 @@ Poor is the foundation
 
 > 进入Activity，绑定Fragment，然后点击返回键之后
 > ![在这里插入图片描述](https://img-blog.csdnimg.cn/2019062621242858.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BldHRlcnA=,size_16,color_FFFFFF,t_70)
->
 
 
 
@@ -229,7 +223,7 @@ Activity的管理是采用任务栈的形式，任务栈采用“后进先出”
 > 2. 在manifest.xml 文件中注册 service
 > 3. 使用 context 的 bindService(Intent,ServiceConnection,int )方法启动Service
 > 4. 不再使用时，调用unbindService()方法停止该服务
->   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190626213017576.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BldHRlcnA=,size_16,color_FFFFFF,t_70)
+>     ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190626213017576.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BldHRlcnA=,size_16,color_FFFFFF,t_70)
 >
 >
 > 生命周期，只会绑定一次，当多次调用绑定服务时，只会多次调用 startService()方法
@@ -595,7 +589,6 @@ public class Main4Activity extends AppCompatActivity {
 > 因为我们一一部手机里面可不只有一个app提供内容，它可能安装了很多含有提供商的应用，比如联系人，日历等。有如此多的提供者，如果你开发一块应用要使用其中多个，你不得了解每个 ContentProvider  的不同实现吗，这样来看，岂不是工作量特别大。所以Android为我们提供了 ContentProvider 来同意管理与不同的 ContentProvider 间的操作。
 >
 > ![img](https://upload-images.jianshu.io/upload_images/1362430-a336044d52818448.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/836/format/webp)
->
 
 
 
