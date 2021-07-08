@@ -67,36 +67,3 @@ Column 用于垂直堆叠元素，如我们最上面示例那样。
 ![image-20210227212941267](https://tva1.sinaimg.cn/large/008eGmZEly1go2eyx6bppj31b50u0wpj.jpg)
 
 我们使用了 mutableStateOf 提供可组合可变存储器的函数
-
-
-
-export JAVA_13_HOME=/Users/petterp/Library/Java/JavaVirtualMachines/azul-13.0.5/Contents/Home
-export JAVA_8_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home
-
-alias jdk8='export JAVA_HOME=$JAVA_8_HOME'
-alias jdk13='export JAVA_HOME=$JAVA_13_HOME'
-
-
-#JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home
-PATH=$JAVA_HOME/bin:$PATH:.
-CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
-
-PATH=$PATH:/Users/petterp/Library/Android/sdk/platform-tools/
-
-
-
-export JAVA_HOME
-export PATH
-export CLASSPATH
-
-
-export PATH=/Users/petterp/flutter/flutter/bin:$PATH
-
-#proxy list
-alias proxy='export all_proxy=socks5://127.0.0.1:1080'
-alias unproxy='unset all_proxy'
-
-
-
-export PUB_HOSTED_URL=https://pub.flutter-io.cn
-export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn

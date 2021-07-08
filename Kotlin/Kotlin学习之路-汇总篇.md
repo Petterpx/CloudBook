@@ -174,7 +174,6 @@ override 子类覆盖时需要加
 1. 空类型
    - //？的意思是，如果为空，则执行前半句，否则执行后半句打印长度
    - //!! 表示强制允许编译器忽略空类型安全
-   
 ```kotlin
    java 代码
    public class MyClass {
@@ -2955,19 +2954,6 @@ class X{
  var vetoable: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
         println("old-$oldValue---new-$newValue")
         return@vetoable newValue == 123
-    }
-```
-
-
-
-#### Delegates.observable
-
-> 用于在属性发生变化时调用指定的回调函数
-
-```kotlin
-   var observable:Int by Delegates.observable(0){
-        property, oldValue, newValue -> 
-        
     }
 ```
 
