@@ -36,8 +36,6 @@ bundletool install-apks --apks=/MyApp/my_app.apks --device-id=101
 
 
 
-## 扩展内容(复制自[官网](https://developer.android.com/studio/command-line/bundletool))
-
 ### App Bundle 简介
 
 > Android App Bundle 是一种发布格式，其中包含您应用的所有经过编译的代码和资源，它会将 APK 生成及签名交由 Google Play 来完成。
