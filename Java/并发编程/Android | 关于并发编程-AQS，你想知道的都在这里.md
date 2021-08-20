@@ -89,17 +89,17 @@
 
 1. 假设线程A要获取资源，其先使自己成为队列的尾部，同时获取一个指向其前驱结点的引用 `myPred`，并不断在父节点引用上自旋判断。
 
-   <img src="https://tva1.sinaimg.cn/large/008i3skNly1gqr7u9ysnsj30xs0kaabg.jpg" alt="image-20210522150249917" style="zoom:50%;" />
+   <img src="https://tva1.sinaimg.cn/large/008i3skNly1gtn2mnzchuj60s80gc3zf02.jpg" alt="image-20210820110114023" style="zoom:50%;" />
 
 2. 当另一个线程B同样也需要获取锁时，上述的过程同样也要来一遍，如下所示 **(QNode-B)**：
 
-   ![image-20210522150400432](https://tva1.sinaimg.cn/large/008i3skNly1gqr7vic45bj31kk0laad2.jpg)
+   ![image-20210820110135569](https://tva1.sinaimg.cn/large/008i3skNly1gtn2n1ssmhj619e0i0ach02.jpg)
 
 3. 当某个线程要释放锁时，就将当前节点的 `locked` 设置为 `false` 。
 
    其后续节点因为不断在自旋，当判断到其前序节点 `locked` 为 `false` ,就表明其前序节点已经释放锁，其自身就可以获取到锁，并且释放当前前序节点引用，以便GC回收。
 
-   ![image-20210522150539809](https://tva1.sinaimg.cn/large/008i3skNly1gqr7x85mdsj31oe0lagop.jpg)
+   ![image-20210820110617378](https://tva1.sinaimg.cn/large/008i3skNly1gtn2rxhs2wj61di0i4wgv02.jpg)
 
 
 
