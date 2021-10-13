@@ -22,6 +22,12 @@
 
 
 
+
+
+//多窗口相关文档
+
+https://developer.android.com/guide/topics/ui/multi-window?hl=zh-cn
+
 ## 进阶支持
 
 - 支持拖动到顶部或者底部显示回收悬浮窗设计
