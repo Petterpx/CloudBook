@@ -10,6 +10,8 @@
 
 ![image-20200317223824637](https://tva1.sinaimg.cn/large/00831rSTly1gcxaxtjowpj30w80feack.jpg)
 
+
+
 #### notifyItemRangeChanged 方法是干啥的呢？
 
 从方法名就可知道，刷新指定范围的item.那为什么要刷新从当前位置刷新到当前列表最后一个item呢,也不难理解，因为移除位置前的下标没变啊，受到影响的只是当前下标至最后一个item-1;
