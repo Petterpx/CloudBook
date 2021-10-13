@@ -1,8 +1,11 @@
-# Mac 设置动态切换jdk版本
+# Mac小技巧 - 设置动态切换jdk版本
+
+> 日常开发中，我们总有时候需要动态切换不同的jdk版本，而在mac上，这些事总是特别简单。
+>
 
 
 
-## 一些需要的命令
+## 一些需要前置了解的命令
 
 #### 查看当前jdk版 本
 
@@ -37,7 +40,6 @@ source .bash_profile
 #### 配置你的 bash_profile
 
 ```
-
 export JAVA_13_HOME=/Users/petterp/Library/Java/JavaVirtualMachines/azul-13.0.5/Contents/Home
 export JAVA_8_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home
 
