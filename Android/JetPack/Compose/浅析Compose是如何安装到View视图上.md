@@ -198,11 +198,15 @@ return found
 
 `compositionContext` 是一个扩展函数，内部使用tag保存当前context
 
+```kotlin
 var View.compositionContext: CompositionContext?
 get() = getTag(R.id.androidx_compose_ui_view_composition_context) as? CompositionContext
 set(value) {
   setTag(R.id.androidx_compose_ui_view_composition_context, value)
 }
+```
+
+
 
 ---
 
