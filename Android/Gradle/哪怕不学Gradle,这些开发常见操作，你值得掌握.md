@@ -1,14 +1,10 @@
-# 哪怕不学Gradle,这些开发常见操作，你也必须掌握！
+# 哪怕不学Gradle,这些开发常见操作，你值得掌握
 
 > `Gradle` 是每个 `Android` 同学都逃不开的一个话题。
 >
 > 你是否看到别人的 `Gradle` 文件干净又卫生？而自己的又是一团乱麻🏷
 >
-> 你是否觉得 `Gradle` 难懂又不想学，希望有一份满足日常开发所需要的呢?
->
 > 不用怕,本篇将结合我的开发日常，将一些常用的操作分享出来，希望可以帮到像我一样不怎么会[玩]`Gradle` 的同学，相信会对大家有所帮助。
->
-> 如果看完本篇，大家能觉得 `Gradle` 还是有点意思，那么最好了。
 
 ## 模板代码提取
 
@@ -16,7 +12,7 @@
 
 这是最基础的操作了，对于一个普通 `model.gradle` ,默认的配置如下：
 
-<img src="https://tva1.sinaimg.cn/large/008i3skNly1gyer00wpctj30u00uagns.jpg" alt="image-20220113095640922" style="zoom: 25%;" />
+![image-20220117094502841](https://tva1.sinaimg.cn/large/008i3skNly1gygfdlsvipj31a90u076h.jpg)
 
 如果我们每个 `model` 都这样写，那岂不是很麻烦，那么让我们提取通用代码：
 
@@ -547,6 +543,8 @@ gradle.projectsLoaded { proj ->
 gradlew assembleDebug -PenablePrivacy=true 
 ```
 
+### 参考
 
+[Android开发者-配置你的build](https://developer.android.com/studio/build?hl=zh-cn)
 
-> 本篇是Gradle常见的一些操作，希望大家看完也能对Gradle有一点兴趣，某些场景下也会非常方便。
+> 我是Petterp,一个三流开发，如果本文对你有所帮助，欢迎点赞支持。
