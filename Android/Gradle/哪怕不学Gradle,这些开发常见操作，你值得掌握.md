@@ -527,13 +527,13 @@ gradlew app:assembleRoyalFinalDebug  -PenableBugly=true
 gradle.projectsLoaded { proj ->
     println 'projectsLoaded()->项目结构加载完成（初始化阶段结束）'
     def rootProject = proj.gradle.rootProject
-    rootProject.ext.enableBugly = rootProject.hasProperty("enableBugly") ?: false
-    rootProject.ext.enableBooster = rootProject.hasProperty("enableBooster") ?: false
-    rootProject.ext.enableGms = rootProject.hasProperty("enableGms") ?: false
-    rootProject.ext.enableBytedance = rootProject.hasProperty("enableBytedance") ?: false
-    rootProject.ext.enableSadance = rootProject.hasProperty("enableSadance") ?: false
-    rootProject.ext.enableHms = rootProject.hasProperty("enableHms") ?: false
-    rootProject.ext.enablePrivacy = rootProject.hasProperty("enablePrivacy") ?: false
+    rootProject.ext.enableBugly = rootProject.findProperty("enableBugly") ?: false
+    rootProject.ext.enableBooster = rootProject.findProperty("enableBooster") ?: false
+    rootProject.ext.enableGms = rootProject.findProperty("enableGms") ?: false
+    rootProject.ext.enableBytedance = rootProject.findProperty("enableBytedance") ?: false
+    rootProject.ext.enableSadance = rootProject.findProperty("enableSadance") ?: false
+    rootProject.ext.enableHms = rootProject.findProperty("enableHms") ?: false
+    rootProject.ext.enablePrivacy = rootProject.findProperty("enablePrivacy") ?: false
 }
 ```
 
