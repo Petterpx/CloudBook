@@ -53,7 +53,7 @@
 
 3. **Kotlin**
 
-   `Flow`、`Vocabulary`、协程
+   `Flow`、协程
 
 4. **Android12**
 
