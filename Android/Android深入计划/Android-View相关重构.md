@@ -1,10 +1,12 @@
 # Android-View相关重构
 
+> 关于View的这些你都知道吗，这是View相关部分的一份重构回顾。
+
 ### 什么是View?
 
 View是Android中所有控件的基类，无论是Button和TextView,还是LinearLayout或者ConstraintLayout,它们的共同基类都是View.
 
-![image-20200630204106235](https://tva1.sinaimg.cn/large/007S8ZIlly1ggalltijnsj311i0q0abw.jpg)
+<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1ggalltijnsj311i0q0abw.jpg" alt="image-20200630204106235" style="zoom:50%;" />
 
 它们之间的关系如上图所示，我们很简单的可以理解为你中有我，我中有你，类似递归一样。
 
@@ -18,7 +20,7 @@ View的位置坐标是由它的四个顶点来决定，分别对应于View的四
 
 其中 **top** 是左上角，**left** 是左上角横坐标，**right**是右下角横坐标，**bottom** 是右下角纵坐标。需要注意的是，这些坐标都是相对于View 的父容器来说的。因此它是一种相对坐标，View的坐标和父容器如图所示：
 
-![image-20200630215158710](https://tva1.sinaimg.cn/large/007S8ZIlly1ggannj5btbj315g0q8gou.jpg)
+<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1ggannj5btbj315g0q8gou.jpg" alt="image-20200630215158710" style="zoom:50%;" />
 
 上图中我们发现有 **translationX,translationY**两个参数，这两个参数又是什么呢？
 

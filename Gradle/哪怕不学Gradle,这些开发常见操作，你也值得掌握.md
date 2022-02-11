@@ -1,4 +1,6 @@
-# 哪怕不学Gradle,这些开发常见操作，你值得掌握
+# 哪怕不学Gradle,这些开发常见操作，你也值得掌握
+
+![gradle](https://tva1.sinaimg.cn/large/008i3skNly1gyhnz8rkrfj30l70b874j.jpg)
 
 > `Gradle` 是每个 `Android` 同学都逃不开的一个话题。
 >

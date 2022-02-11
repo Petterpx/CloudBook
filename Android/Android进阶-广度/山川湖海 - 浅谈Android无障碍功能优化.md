@@ -1,10 +1,8 @@
+
+
 # 山川湖海 - Android无障碍功能优化实践
 
-
-
-> 是谁来自山川湖海，却囿于昼夜、厨房与爱
->
-> 《万能青年旅店乐队》
+![科技与人文](https://tva1.sinaimg.cn/large/008i3skNly1gyossetxzgj30hs0bvdgf.jpg)
 
 Hi，很高兴见到你！👋🏻
 
@@ -140,6 +138,44 @@ view.accessibilityDelegate = object : View.AccessibilityDelegate() {
 ```
 
 ---
+#### 手动发送无障碍事件
+
+但某些情况下，我们不可能每次都像上述那要去设置吧，每次点击开关时，都走一遍上述设置代理的逻辑吧，那的确挺不优雅的，比如在某个 **RecyclerView** 中，我们甚至总不能自己维护一个选择状态吧。那么有没有其他方式，当我点击开关时，**手动去通知** 更新当前无障碍下的 [选择] 状态呢？
+
+当然是可以的，我们通过 `View.sendAccessibilityEvent(type)` 手动发送一个通知事件，支持的事件类型如下：
+
+> 具体在 `AccessibilityEvent` 类中
+
+```java
+    public static final int TYPE_VIEW_CLICKED = 0x00000001;
+    public static final int TYPE_VIEW_LONG_CLICKED = 0x00000002;
+    public static final int TYPE_VIEW_SELECTED = 0x00000004;
+    public static final int TYPE_VIEW_FOCUSED = 0x00000008;
+    public static final int TYPE_WINDOWS_CHANGED = 0x00400000;
+    ...
+```
+**使用方式示例：**
+
+比如我们使用 **view**.`sendAccessibilityEvent(TYPE_VIEW_SELECTED)`
+
+那么就可以在自定义的无障碍代理 `onPopulateAccessibilityEvent()` 方法中获得监听，从而更改配置,具体如下所示:
+
+```java
+setAccessibilityDelegate(new AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                super.onPopulateAccessibilityEvent(host, event);
+                int type = event.getEventType();
+              	// type取决于你sendAccessibilityEvent(type)时
+                if (type == AccessibilityEvent.TYPE_VIEW_SELECTED || type == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED) {
+                  	//提示，可以使用host.getTag(),将数据保存在view的tag中
+                    event.getText().add("复选框" + "自定义逻辑");
+                }
+            }
+        });
+```
+
+---
 
 ### 增加按钮触摸范围
 
@@ -193,7 +229,7 @@ view.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
 
 也非常简单，只需要增加相应的 `contentDescription` 即可，相应所有View页都可以去调用 **setContentDescription()** 。
 
-需要注意的是，如果你自定义的 `View` 是一个 **按钮** ，而且没有使用 `ImageButton` 或者单独 `继承自Button` ,那么此时如果只是增加 `contentDescription` ，那么当view在无障碍下点击时，则只会读取`描述`，而使用了 `ImageButton` 或者 `Button` 的在无障碍模式下会被读作xx按钮，相比起来，后者更象征着这具有一个行为作用，而前者仅仅像一个普通文本，这对视障用户而言，体验将影响很多。
+需要注意的是，如果你自定义的 `View` 是一个 **按钮** 功能 ，而且没有继承自 `ImageButton` 或者 `Button` ,那么此时如果只是增加 `contentDescription` 标签描述，那么当view在无障碍下点击时，则只会读取`描述`，而使用了 `ImageButton` 或者 `Button` 的在无障碍模式下会被读作xx **[按钮]** ，相比起来，后者更象征着这具有一个行为作用，而前者仅仅像一个普通文本，这对视障用户而言，体验将影响很多。
 
 **所以我们要如何快速的兼容呢？**
 
@@ -201,7 +237,7 @@ view.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
 
 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gyklxo0x25j30ze0u00xs.jpg" alt="image-20220121003411236" style="zoom:33%;" />
 
-**getAccessibilityClassName()**,我们只需要返回相应的 `Class Name` 即可。所以如果你的某个 View 具有 **行为** 作用，或者代表着是一个自定义的 **按钮** ，那么就可以重写其的这个方法，返回 `Button` ,或者 `ImageButton` ，这样在无障碍模式下，其就会被系统判断为是一个具有交互作用的按钮。
+**getAccessibilityClassName()**,我们只需要返回相应的 `Class Name` 即可。所以如果你的某个 View 具有 **行为** 作用，或者代表着是一个自定义的 **按钮** ，那么就可以重写你所自定义View的这个方法，返回 `Button` ,或者 `ImageButton` ，这样在无障碍模式下，其就会被系统判断为是一个具有交互作用的按钮。
 
 当然，严格意义上而言，我们应该尽可能使用系统组件，但业务的变化导致我们不可能一直如此，所以上述的方案也是一种比较取巧的方式。
 
