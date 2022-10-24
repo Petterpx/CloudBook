@@ -13,4 +13,3 @@ git config --global gpg.program $(which gpg)
 ```
 
 参考链接：https://github.com/isaacs/github/issues/675
-

@@ -43,13 +43,11 @@ implementation "com.squareup.okhttp3:logging-interceptor:4.3.0"
 
 Kotlin推荐使用协程，Java推荐使用LiveData
 
-- **`PagingData`**-用于分页数据的容器。每次刷新数据都会有一个单独的对应`PagingData`。
-- **`PagingSource`**-a `PagingSource`是用于将数据快照加载到的流的基类`PagingData`。
-- **`Pager.flow`** - `Flow`基于`PagingConfig`和构建一个定义如何构造已实现的函数的a `PagingSource`。
-- **`PagingDataAdapter`** - `RecyclerView.Adapter`出现`PagingData`在中的`RecyclerView`。在`PagingDataAdapter`可连接到一个科特林`Flow`，一`LiveData`，一个RxJava `Flowable`或RxJava `Observable`。在页面加载时`PagingDataAdapter`侦听内部`PagingData`加载事件，并`DiffUtil`在后台线程上使用它来计算细粒度的更新，因为以新`PagingData`对象的形式接收到更新的内容。
-- `RemoteMediator` -帮助实现来自网络和数据库的分页。
-
-
+- **`PagingData`** - 用于存储分页数据的容器。每次数据刷新都会有一个相应的单独 `PagingData`。
+- **`PagingSource`** - `PagingSource` 是用于将数据快照加载到 `PagingData` 流的基类。
+- **`Pager.flow`** - 根据 `PagingConfig` 和一个定义如何构造实现的 `PagingSource` 的构造函数，构建一个 `Flow<PagingData>`。
+- **`PagingDataAdapter`** - 一个用于在 `RecyclerView` 中呈现 `PagingData` 的 `RecyclerView.Adapter`。`PagingDataAdapter` 可以连接到 Kotlin `Flow`、`LiveData`、RxJava `Flowable` 或 RxJava `Observable`。`PagingDataAdapter` 会在页面加载时监听内部 `PagingData` 加载事件，并于以新对象 `PagingData` 的形式收到更新后的内容时，在后台线程中使用 `DiffUtil` 计算细粒度更新。
+- `RemoteMediator` - 帮助接收来自网络和数据库的数据，实现分页。
 
 ## 开始使用
 
@@ -389,4 +387,3 @@ private fun initAdapter() {
         }
     }
 ```
-
