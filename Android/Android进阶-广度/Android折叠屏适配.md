@@ -81,6 +81,7 @@ Android studio3.5 开始，支持创建折叠屏的虚拟设备，如下：
 
 ```shell
 adb shell wm size 1800x1700
+adb shell wm size 2480x2200
 ```
 
 分辨率恢复
