@@ -38,7 +38,7 @@ Hi, 你好，很高兴见到你 👋
 
 sealed 初始化
 
-![image-20221024142950638](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241429685.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241429685.png)
 
 如题,我们有一个公用的属性 `sum` ,为了便于复用，我们将其抽离到 `Fruit` 类构造函数中，让子类便于初始化时传入，而不用重复显式声明。
 
@@ -46,7 +46,7 @@ sealed 初始化
 
 如果我们此时来看一下字节码：
 
-![image-20221022080336140](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220803286.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220803286.png)
 
 不难发现，无论是子类Apple还是父类Fruit,他们都生成了 `getSum()` 与 `setSum()` 方法 与 `sum` 字段，而且，父类的 `sum` 完全处于浪费阶段，我们根本没法用到。😵‍💫
 
@@ -56,7 +56,7 @@ sealed 初始化
 
 我们对上述示例进行稍微改造，如下所示：
 
-![image-20221018094841450](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210180948479.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210180948479.png)
 
 如题，我们将sum变量定义为了一个抽象变量，从而让子类自行实现。对比字节码可以发现，相比最开始的示例，我们的父类 `Fruit` 中减少了一个 `sum` 变量的损耗。
 
@@ -66,7 +66,7 @@ sealed 初始化
 
 答案是可以，我们利用 **接口** 改造即可，如下所示：
 
-![image-20221018100240436](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210181002467.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210181002467.png)
 
 如上所示，我们增加了一个名为 `IFruit` 的接口，并让 密封父类 实现了这个接口，子类默认在构造函数中实现该属性即可。
 
@@ -90,7 +90,7 @@ sealed 初始化
 
 如下截图中所示，我们随便创建了一个方法，并增加了 `inline` 关键字：
 
-![image-20221012230619100](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210122306173.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210122306173.png)
 
 观察截图会发现，此时IDE已经给出了提示，它建议你移除 `inline` , Why? 为什么呢？🥲
 
@@ -106,7 +106,7 @@ sealed 初始化
 
 如下图所示，我们对上述示例做一个论证：
 
-![image-20221012232807919](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210122328936.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210122328936.png)
 
 > **Jvm: 我谢谢你。**
 
@@ -116,13 +116,13 @@ sealed 初始化
 
 如下示例：
 
-![image-20221013094634526](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210130946553.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210130946553.png)
 
 转成字节码后，可以发现，`tryKtx()` 被创建为了一个匿名内部类 `(Simple$test|1)` 。每次调用时，相当于需要创建匿名类的实例对象，从而导致二次调用的性能损耗。
 
 那如果我们给其增加 `inline` 呢？🤖,反编译后相应的 java代码 如下：
 
-![image-20221013100057206](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210131000230.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210131000230.png)
 
 具体对比图如上所示，不难发现，我们的调用处已经被替换为原方法，相应的 `lambda` 也被消除了，从而显著减少了性能损耗。
 
@@ -130,7 +130,7 @@ sealed 初始化
 
 如果查看官方库相应的代码，如下所示，比如 `with` :
 
-![image-20221024142853448](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241428490.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241428490.png)
 
 不难发现，`inline` 的大多数场景仅且在 **高阶函数** 并且 **方法行数较短** 时适用。因为对于普通方法，jvm本身对其就会进行优化，所以 `inline` 在普通方法上的的意义几乎聊胜于无。
 
@@ -159,7 +159,7 @@ class Book {
 
 上述代码看着似乎没什么问题，但如果我们将其转为字节码后再看一看：
 
-![image-20221024091359601](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210240913685.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202212130031085.png)
 
 仅仅只是不难发现，仅仅想多增加了一个类似静态的普通字段，结果凭空增加了一个静态对象以及多增加了 **get()** 方法,而这个损耗可能远超出一个普通属性的价值。
 
@@ -208,7 +208,7 @@ class Book {
 
 相应的字节码如下：
 
-![image-20221024142110409](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241421437.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241421437.png)
 
 ### Tips
 
@@ -226,6 +226,24 @@ object Keys {
 }
 ```
 
+#### 2022/12/6补充
+
+使用 `kotlin` 文件形式去写,这种写法属于以增加静态类的方式避免伴生对象的内存损耗，如果你的场景是单独的增加一个tag,那么这种写法比较推荐。
+
+> 对于sdk的开发者,同时建议增加 **@file:JvmName(“ 文件名”)** ,从而禁止生成的 **kt文件** 在java语境下被调用到(欺负java不识别空格🤪)。
+
+```kotlin
+@file:JvmName(" Testxx")
+
+private const val TAG = "KEY_TEST_TAG"
+
+class TestKt {
+    private fun test() {
+        println(TAG)
+    }
+}
+```
+
 ## Apply!=构造者模式
 
 `apply` 作为开发中的常客，为我们带来了不少便利。其内部实现也非常简单，将我们的对象以函数的形式返回，`this` 作为接收者。从而以一种优雅的方式实现对对象方法、属性的调用。
@@ -234,13 +252,13 @@ object Keys {
 
 ### 示例
 
-![image-20221022082110693](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220821725.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220821725.png)
 
 如题，我们存在一个示例Builder,并在其中添加了两个方法，即 **addTitle()**，与 **addSecondTitle()** 。后者以 `apply` 作为返回值，代码可读性非常好，相比前者,在 `kotlin` 中其显得非常优雅。
 
 但如果我们去看一眼字节码呢？
 
-![image-20221022082523238](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220825285.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220825285.png)
 
 如上所示，使用了 `apply` 后，我们的字节码中增加了多余步骤，相比不使用的，包大小会有一点影响，性能上几乎毫无差距。
 
@@ -260,13 +278,13 @@ object Keys {
 
 - `SYNCHRONIZED`(同步锁，默认实现)
 - `PUBLICATION`(CAS)
-- `PUBLICATION`(不作处理)
+- `NONE`(不作处理)
 
 `lazy` 虽然使用简单，但在 `Android` 的开发背景下，`lazy` 经常容易使用不当🤦🏻‍♂️，也因此常常会出现为了[便利] 而造成的性能隐患。
 
 如下示例：
 
-![image-20221024142652067](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241426108.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210241426108.png)
 
 如上所示，我们延迟初始化了一个点击事件，方便在 `onCreate()` 中进行设置 **点击事件** 以及**后续复用**。
 
@@ -299,7 +317,7 @@ fun testNoInteger() {
 
 我们提供了两个方法，前者是默认方法，后者是带优化的方法，具体字节码如下：
 
-![image-20221022095310870](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220953928.png)
+![](https://raw.githubusercontent.com/Petterpx/ImageRespoisty/main/img/202210220953928.png)
 
 如题，不难发现，前者使用的是 `java` 中的 **包装类型** ，使用时还需要经历 **拆箱** 与 **装箱** ，而后者是非包装类型，从而免除了这一操作，从而节省性能。
 
